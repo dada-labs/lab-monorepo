@@ -2,12 +2,18 @@
   "name": "dada-lab",
   "private": true,
   "scripts": {
-    "dev": "turbo dev",
+    "dev": "turbo watch dev",
     "build": "turbo build",
     "lint": "turbo lint"
   },
   "packageManager": "pnpm@10.28.1",
   "devDependencies": {
+    "@prisma/config": "^7.3.0",
+    "prisma": "^7.3.0",
+    "tsx": "^4.21.0",
     "turbo": "^2.7.6"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.3.0"
   }
 }
