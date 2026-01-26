@@ -1,14 +1,111 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id       String   @id @default(cuid())
+    email    String   @unique
+    password String
+    name     String?
+    role     UserRole @default(MANAGER)
+
+    refreshTokens RefreshToken[]
+    projects      Project[]
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    Contact   Contact[]
+}
+
+enum UserRole {
+    ADMIN
+    MANAGER
+}
+
+model RefreshToken {
+    id     String @id @default(uuid())
+    token  String @unique
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    expiresAt DateTime
+    createdAt DateTime @default(now())
+}
+
+model Project {
+    id      String @id @default(cuid())
+    slug    String @unique
+    title   String
+    oneLine String
+
+    description String?
+    role        String[]
+    techs       TechTag[]
+    highlights  String[]
+
+    liveUrl   String?
+    githubUrl String?
+
+    thumbnail String?
+    viewCount Int     @default(0)
+
+    status     ProjectStatus @default(PLANNING)
+    visibility Visibility    @default(PUBLIC)
+
+    authorId String
+    author   User   @relation(fields: [authorId], references: [id])
+
+    startedAt DateTime?
+    endedAt   DateTime?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+enum Visibility {
+    PUBLIC
+    PRIVATE
+    DRAFT
+}
+
+enum ProjectStatus {
+    PLANNING
+    IN_PROGRESS
+    MAINTENANCE
+    COMPLETED
+    HOLD
+}
+
+model TechTag {
+    id        String    @id @default(cuid())
+    name      String    @unique
+    createdAt DateTime  @default(now())
+    projects  Project[]
+}
+
+model Contact {
+    id      String @id @default(cuid())
+    name    String
+    email   String
+    content String
+
+    status ContactStatus @default(UNREAD)
+
+    userId String?
+    user   User?   @relation(fields: [userId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+enum ContactStatus {
+    UNREAD // 아직 읽지 않음
+    IN_REVIEW // 검토 중 
+    ANSWERED // 답변 완료
+    CANCELED // 취소
 }
