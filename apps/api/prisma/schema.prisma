@@ -8,23 +8,32 @@ datasource db {
 }
 
 model User {
-    id       String   @id @default(cuid())
-    email    String   @unique
-    password String
-    name     String?
-    role     UserRole @default(MANAGER)
+    id           String   @id @default(cuid())
+    email        String   @unique
+    passwordHash String
+    name         String?
+    role         UserRole @default(MANAGER)
 
     refreshTokens RefreshToken[]
     projects      Project[]
 
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
-    Contact   Contact[]
+    contacts  Contact[]
+
+    status UserStatus @default(PENDING)
 }
 
 enum UserRole {
     ADMIN
     MANAGER
+    USER
+}
+
+enum UserStatus {
+    PENDING // 승인 대기 
+    ACTIVE // 활성화
+    INACTIVED // 비활성화 (로그인 불가)
 }
 
 model RefreshToken {
