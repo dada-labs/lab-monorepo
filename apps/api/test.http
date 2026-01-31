@@ -1,0 +1,37 @@
+### 1. 회원가입
+POST http://localhost:4000/api/auth/signup
+Content-Type: application/json
+
+{
+  "email": "dada4dev@gmail.com",
+  "password": "Dada4dev12#",
+  "name": "다다",
+  "role": "ADMIN",
+  "status": "ACTIVE"
+}
+
+### 1. 회원가입
+POST http://localhost:4000/api/auth/signup
+Content-Type: application/json
+
+{
+  "email": "manager@test.com",
+  "password": "password123",
+  "name": "테스트 매니저"
+}
+
+### 2. 로그인 (성공 시 아래 변수에 토큰 복사)
+# @name login
+POST http://localhost:4000/api/auth/signin
+Content-Type: application/json
+
+{
+  "email": "manager@test.com",
+  "password": "password123"
+}
+
+
+### 3. 토큰 재발급
+POST http://localhost:4000/api/auth/refresh
+Cookie: refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWwxcDZ2OHAwMDAxdWM0NDhqM2MyNm1iIiwicm9sZSI6Ik1BTkFHRVIiLCJlbWFpbCI6Im1hbmFnZXJAdGVzdC5jb20iLCJpYXQiOjE3Njk4MzE5ODYsImV4cCI6MTc3MDQzNjc4Nn0.q1oHiENy2quAesjji9A-JQnyfTKDWK0F9mgUNBnrMTE
+
