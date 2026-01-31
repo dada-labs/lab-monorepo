@@ -36,4 +36,27 @@ export class UserRepository {
       },
     });
   }
+
+  // 관리 계정 목록 확인용
+  async findAllUsers() {
+    return prisma.user.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
+  // 사용자 (계정)상태 변경
+  async updateStatus(userId: string, status: UserStatus) {
+    return prisma.user.update({
+      where: { id: userId },
+      data: { status },
+    });
+  }
+
+  // 비밀번호 변경
+  async updatePassword(userId: string, passwordHash: string) {
+    return prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash },
+    });
+  }
 }

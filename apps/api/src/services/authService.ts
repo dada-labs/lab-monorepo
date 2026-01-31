@@ -4,16 +4,12 @@ import { RefreshTokenRepository } from "../repositories/refreshTokenRepository.j
 import { generateTokens } from "../utils/jwt.js";
 import type { UserRole, UserStatus } from "@prisma/client";
 import type { AuthUser } from "../types/express.js";
+import { hashPassword, isPasswordMatch } from "../utils/password.js";
 
 const userRepository = new UserRepository();
 const refreshTokenRepository = new RefreshTokenRepository();
 
 export class AuthService {
-  // 비밀번호 암호화
-  private async hashPassword(password: string): Promise<string> {
-    return await bcrypt.hash(password, 10);
-  }
-
   // 이메일 유효성 및 비밀번호 암호화
   private async validateAndEncrypt(email: string, password: string) {
     // 1. 중복 이메일 확인
@@ -21,7 +17,7 @@ export class AuthService {
     if (existingUser) throw new Error("이미 존재하는 이메일입니다.");
 
     // 2. 비밀번호 암호화
-    const hashedPassword = await this.hashPassword(password);
+    const hashedPassword = await hashPassword(password);
     return hashedPassword;
   }
 
@@ -48,6 +44,7 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
+  // 회원가입
   async signup(data: {
     email: string;
     password: string;
@@ -86,11 +83,8 @@ export class AuthService {
     }
 
     // 2. 비밀번호 검증
-    const isPasswordMatch = await bcrypt.compare(
-      data.password,
-      user.passwordHash
-    );
-    if (!isPasswordMatch) {
+    const isPwMatch = await isPasswordMatch(data.password, user.passwordHash);
+    if (!isPwMatch) {
       throw new Error("이메일 또는 비밀번호가 일치하지 않습니다.");
     }
 
