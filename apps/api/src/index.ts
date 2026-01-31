@@ -10,12 +10,13 @@ import cors from "cors";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+const isProd = process.env.NODE_ENV === "production";
 
 // 허용할 도메인 목록
 const allowedOrigins = [
   process.env.CLIENT_WEB_URL,
   process.env.CLIENT_ADMIN_URL,
-  "http://localhost:4000", // API 테스트용
+  !isProd && "http://localhost:4000", // API 테스트용
 ].filter(Boolean) as string[];
 
 app.use(
