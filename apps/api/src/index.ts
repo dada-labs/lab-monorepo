@@ -6,11 +6,31 @@ import express, {
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-const isProd = process.env.NODE_ENV === "production";
 
+// 허용할 도메인 목록
+const allowedOrigins = [
+  process.env.CLIENT_WEB_URL,
+  process.env.CLIENT_ADMIN_URL,
+  "http://localhost:4000", // API 테스트용
+].filter(Boolean) as string[];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.error(`[CORS Error] Origin: ${origin} is not allowed.`);
+        callback(new Error("CORS 설정 확인이 필요합니다."));
+      }
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser()); // req.cookies 사용
 
