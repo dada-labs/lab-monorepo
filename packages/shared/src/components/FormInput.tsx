@@ -4,6 +4,7 @@ import clsx from "clsx";
 export interface FormInputProps {
   label?: string;
   type?: "text" | "email" | "password" | "tel" | "url"; // 타입 확장
+  size?: "lg" | "md" | "sm";
   value: string;
   placeholder?: string;
   required?: boolean;
@@ -19,6 +20,7 @@ export interface FormInputProps {
 export function FormInput({
   label,
   type = "text",
+  size = "lg",
   value,
   placeholder,
   required = false,
@@ -42,11 +44,14 @@ export function FormInput({
         type={type}
         required={required}
         className={clsx(
-          "relative block w-full h-12 rounded-md border px-3 py-2 text-gray-900 placeholder-gray-500 transition-colors focus:z-10 focus:outline-none",
+          "relative block w-full border rounded-md px-3 py-2 text-gray-900 placeholder-gray-500 transition-colors focus:z-10 focus:outline-none",
+          size === "lg" && "h-12",
+          size === "md" && "h-10 text-sm",
+          size === "sm" && "h-6 text-sm",
           // 에러 여부에 따른 보더 색상 처리
           error
             ? "border-red-500 focus:border-red-500"
-            : "border-gray-300 focus:border-blue-500", // 'primary' 대신 범용적인 색상 사용
+            : "border-gray-300 focus:border-primary",
           disabled && "bg-gray-100 cursor-not-allowed text-gray-500"
         )}
         placeholder={placeholder}

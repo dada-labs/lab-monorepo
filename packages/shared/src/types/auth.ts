@@ -1,4 +1,4 @@
-import { UserRole } from "./user";
+import { User, UserRole } from "./user";
 
 export interface AuthUser {
   id: string;
@@ -12,7 +12,11 @@ export interface AuthResponse {
   user: AuthUser | null;
 }
 
-export interface signInRequest {
-  email: string;
-  password: string;
+export interface SignInResponse {
+  success: boolean;
+  data: {
+    accessToken: string;
+    user: User | null;
+  } | null;
+  message?: string;
 }

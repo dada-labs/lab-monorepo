@@ -14,7 +14,7 @@ export const signUp = async (req: Request, res: Response) => {
       data: user,
     });
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ success: false, message: error.message });
   }
 };
 
@@ -28,14 +28,15 @@ export const signIn = async (req: Request, res: Response) => {
     res.cookie("refreshToken", refreshToken, refreshTokenCookieOptions);
 
     res.status(200).json({
-      message: "로그인 성공",
+      success: true,
       data: {
         accessToken,
         user,
       },
+      message: "로그인 성공",
     });
   } catch (error: any) {
-    res.status(401).json({ message: error.message });
+    res.status(401).json({ success: false, message: error.message });
   }
 };
 
