@@ -1,0 +1,15 @@
+@theme {
+  /* 메인 컬러 */
+  --color-primary: #0336ff;
+  --color-primary-softer: #7591ff;
+  --color-primary-light: #d9e1ff;
+  --color-primary-lightest: #f0f3ff;
+  --color-primary-dark: #0e36d1;
+
+  /* 상태 컬러 */
+  --color-success: #10b981;
+  --color-error: #ef4444;
+
+  /* 애니메이션 등 기타 공통 설정 */
+  --animate-slow: spin 3s linear infinite;
+}
