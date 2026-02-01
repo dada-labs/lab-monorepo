@@ -12,7 +12,7 @@ export default function AuthLayout() {
                 <span className="sr-only">Dada Lab</span>
                 <img
                   src="/images/logo.svg"
-                  alt="DadaChat logo"
+                  alt="DadaLab logo"
                   width={206}
                   height={48}
                 />

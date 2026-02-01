@@ -1,23 +1,16 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import AuthLayout from "@/components/layout/AuthLayout";
 import SignInPage from "@/pages/auth/SignInPage";
-import DashboardLayout from "../components/layout/DashboardLayout";
+import SignUpPage from "@/pages/auth/SignUpPage";
 import ProjectListPage from "@/pages/project/ProjectListPage";
+import ContactListPage from "@/pages/contact/ContactListPage";
+import UserListPage from "@/pages/user/UserListPage";
 
-const AppRoutes = () => {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<AuthLayout />}>
-          <Route path="/auth/signin" element={<SignInPage />} />
-          <Route path="/auth/signup" element={<SignInPage />} />
-        </Route>
-        <Route path="/" element={<DashboardLayout />}>
-          <Route path="/project" element={<ProjectListPage />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  );
-};
+export const publicRoutes = [
+  { path: "/auth/signin", element: <SignInPage /> },
+  { path: "/auth/signup", element: <SignUpPage /> },
+];
 
-export default AppRoutes;
+export const protectedRoutes = [
+  { path: "/project", element: <ProjectListPage /> },
+  { path: "/contact", element: <ContactListPage /> },
+  { path: "/users", element: <UserListPage /> },
+];

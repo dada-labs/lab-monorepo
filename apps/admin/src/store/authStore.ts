@@ -21,8 +21,11 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "dadalab-auth-storage",
-      onRehydrateStorage: () => () => {
-        useAuthStore.setState({ hasHydrated: true });
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.hasHydrated = true;
+          useAuthStore.setState({ hasHydrated: true });
+        }
       },
       partialize: (state) => ({
         user: state.user,
