@@ -1,10 +1,10 @@
 @theme {
   /* 메인 컬러 */
-  --color-primary: #0336ff;
-  --color-primary-softer: #7591ff;
-  --color-primary-light: #d9e1ff;
-  --color-primary-lightest: #f0f3ff;
-  --color-primary-dark: #0e36d1;
+  --color-primary: #035bff;
+  --color-primary-softer: #6299ff;
+  --color-primary-light: #bed3fb;
+  --color-primary-lightest: #e9f1ff;
+  --color-primary-dark: #004cd9;
 
   /* 상태 컬러 */
   --color-success: #10b981;
