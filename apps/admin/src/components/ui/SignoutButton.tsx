@@ -2,15 +2,14 @@ import { Button } from "@shared";
 import { useNavigate } from "react-router-dom";
 import { LogOut } from "@shared/icons";
 import { useLnbStore } from "@/store/lnbStore";
-import { useAuthStore } from "@/store/authStore";
+import { signOut } from "@/lib/auth";
 
 export default function SignoutButton() {
   const navigate = useNavigate();
   const { isSidebarExpanded } = useLnbStore();
-  const clearAuth = useAuthStore((state) => state.clearAuth);
 
-  const handleSignout = () => {
-    clearAuth();
+  const handleSignout = async () => {
+    await signOut();
     navigate("/auth/signin", { replace: true });
   };
 
