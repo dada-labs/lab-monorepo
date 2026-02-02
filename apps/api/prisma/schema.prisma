@@ -53,7 +53,6 @@ model Project {
     oneLine String
 
     description String?
-    role        String[]
     techs       TechTag[]
     highlights  String?
 
