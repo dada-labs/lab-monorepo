@@ -55,13 +55,12 @@ model Project {
     description String?
     role        String[]
     techs       TechTag[]
-    highlights  String[]
+    highlights  String?
 
     liveUrl   String?
     githubUrl String?
 
-    thumbnail String?
-    viewCount Int     @default(0)
+    viewCount Int @default(0)
 
     status     ProjectStatus @default(PLANNING)
     visibility Visibility    @default(PUBLIC)
@@ -74,6 +73,11 @@ model Project {
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    // 파일 관련
+    thumbnailId String?             @unique
+    thumbnail   Attachment?         @relation("ProjectThumbnail", fields: [thumbnailId], references: [id])
+    attachments ProjectAttachment[]
 }
 
 enum Visibility {
@@ -97,6 +101,43 @@ model TechTag {
     projects  Project[]
 }
 
+model Attachment {
+    id        String   @id @default(uuid())
+    url       String
+    key       String?
+    fileName  String
+    fileType  String
+    fileSize  Int
+    createdAt DateTime @default(now())
+
+    projectAttachments ProjectAttachment[]
+    contactAttachments ContactAttachment[]
+
+    thumbnailOf Project? @relation("ProjectThumbnail")
+}
+
+model ProjectAttachment {
+    id String @id @default(uuid())
+
+    projectId String
+    project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+    fileId String
+    file   Attachment @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+    @@unique([projectId, fileId])
+}
+
+model ContactAttachment {
+    id        String     @id @default(uuid())
+    contactId String
+    contact   Contact    @relation(fields: [contactId], references: [id], onDelete: Cascade)
+    fileId    String
+    file      Attachment @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+    @@unique([contactId, fileId])
+}
+
 model Contact {
     id      String @id @default(cuid())
     name    String
@@ -110,6 +151,8 @@ model Contact {
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    attachments ContactAttachment[]
 }
 
 enum ContactStatus {
