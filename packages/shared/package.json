@@ -1,0 +1,22 @@
+{
+  "name": "@dada-lab/shared",
+  "version": "1.0.0",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.563.0",
+    "tailwind-merge": "^3.4.0"
+  },
+  "peerDependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.1.18",
+    "@tailwindcss/vite": "^4.1.18",
+    "@types/react": "^19.2.5",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "~5.9.3"
+  }
+}
