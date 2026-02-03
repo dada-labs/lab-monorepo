@@ -99,3 +99,16 @@ Content-Type: application/json
     "title": "프로젝트 아카이빙",
     "slug": "project-archiving"
 }
+
+### 프로젝트 목록
+GET http://localhost:4000/api/projects/
+Content-Type: application/json
+
+
+### 프로젝트 최신 목록
+GET http://localhost:4000/api/projects/recent
+Content-Type: application/json
+
+### 프로젝트 상세보기
+GET http://localhost:4000/api/projects/cml5tts4p0001uc4c5qpnawzq
+Content-Type: application/json

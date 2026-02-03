@@ -87,4 +87,45 @@ export class ProjectService {
 
     return await projectRepository.delete(id);
   }
+
+  async getPaginatedProjects(query: {
+    page?: string;
+    keyword?: string;
+    tag?: string;
+    status?: string;
+  }) {
+    const limit = 12;
+    const page = Math.max(Number(query.page) || 1, 1);
+    const skip = (page - 1) * limit;
+
+    const { total, items } = await projectRepository.findProjectsWithFilters({
+      skip,
+      take: limit,
+      ...(query.keyword && { keyword: query.keyword }),
+      ...(query.tag && { tag: query.tag }),
+      ...(query.status && { status: query.status as ProjectStatus }),
+    });
+
+    return {
+      projects: items,
+      meta: {
+        totalCount: total,
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  async getRecnetProjects() {
+    const limit = 8;
+    const result = await projectRepository.findRecentProjects(limit);
+
+    return result;
+  }
+
+  async getProjectById(id: string) {
+    const result = await projectRepository.getProjectDetail(id);
+
+    return result;
+  }
 }

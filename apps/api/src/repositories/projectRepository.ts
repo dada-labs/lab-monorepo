@@ -54,4 +54,66 @@ export const projectRepository = {
       where: { id },
     });
   },
+
+  // 프로젝트 상세보기, 조회수 증가
+  async getProjectDetail(id: string) {
+    return await prisma.project.update({
+      where: { id },
+      data: {
+        viewCount: {
+          increment: 1,
+        },
+      },
+      include: {
+        thumbnail: true,
+        techs: true,
+        attachments: { include: { file: true } },
+      },
+    });
+  },
+
+  async findProjectsWithFilters(params: {
+    skip: number;
+    take: number;
+    keyword?: string;
+    tag?: string;
+    status?: ProjectStatus;
+  }) {
+    const { skip, take, keyword, tag, status } = params;
+
+    const where: Prisma.ProjectWhereInput = {
+      AND: [
+        keyword ? { title: { contains: keyword, mode: "insensitive" } } : {},
+        tag ? { techs: { some: { name: tag } } } : {},
+        status ? { status } : {},
+      ],
+    };
+
+    const [total, items] = await Promise.all([
+      prisma.project.count({ where }),
+      prisma.project.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { createdAt: "desc" },
+        include: {
+          thumbnail: true,
+          techs: true,
+        },
+      }),
+    ]);
+
+    return { total, items };
+  },
+
+  async findRecentProjects(limit: number) {
+    return prisma.project.findMany({
+      take: limit,
+      include: {
+        thumbnail: true,
+        techs: true,
+        attachments: { include: { file: true } },
+      },
+    });
+  },
 };
