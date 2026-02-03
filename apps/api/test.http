@@ -59,3 +59,43 @@ Content-Type: application/json
 {
   "status": "INACTIVED"
 }
+
+### 프로젝트 생성
+POST http://localhost:4000/api/projects
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWwxcDZ2OHAwMDAxdWM0NDhqM2MyNm1iIiwicm9sZSI6Ik1BTkFHRVIiLCJlbWFpbCI6Im1hbmFnZXJAdGVzdC5jb20iLCJpYXQiOjE3NzAwNzYwNDEsImV4cCI6MTc3MDA3Nzg0MX0.i9BdNK7bYkdXgtZ-38w0ZBM-IIi9fqw6VR58Hocj4dE
+Content-Type: application/json
+
+{
+    "title": "프로젝트 포트폴리오",
+    "slug": "portfolio-2026",
+    "oneLine": "Next.js와 React 환경을 모두 학습 적용한 프로젝트 아카이빙 서비스입니다.",
+    "description": "프로젝트 상세 설명이 들어가는 곳입니다.",
+    "techs": ["React", "TypeScript", "Next.js", "Express", "Prisma" ],
+    "status": "IN_PROGRESS",
+    "visibility": "PUBLIC"
+}
+
+### 프로젝트 생성 (태그 10개 초과 - 에러 테스트)
+POST http://localhost:4000/api/projects
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWwxcDZ2OHAwMDAxdWM0NDhqM2MyNm1iIiwicm9sZSI6Ik1BTkFHRVIiLCJlbWFpbCI6Im1hbmFnZXJAdGVzdC5jb20iLCJpYXQiOjE3NzAwNzc5NDUsImV4cCI6MTc3MDA3OTc0NX0.HRc9e9xiKIEp3p-jVAF8-crldLtQ35HXHbvRGT3UBq0
+Content-Type: application/json
+
+{
+    "title": "프로젝트 포트폴리오",
+    "slug": "portfolio-2026",
+    "oneLine": "에러가 발생해야 합니다.",
+    "description": "프로젝트 상세 설명이 들어가는 곳입니다.",
+    "techs": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"],
+    "status": "IN_PROGRESS",
+    "visibility": "PUBLIC"
+}
+
+### 프로젝트 수정
+PATCH http://localhost:4000/api/projects/cml5tts4p0001uc4c5qpnawzq
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWwxcDZ2OHAwMDAxdWM0NDhqM2MyNm1iIiwicm9sZSI6Ik1BTkFHRVIiLCJlbWFpbCI6Im1hbmFnZXJAdGVzdC5jb20iLCJpYXQiOjE3NzAwNzg3MzMsImV4cCI6MTc3MDA4MDUzM30.e8A0m5xXj0Yb2ONBvnt5pdDnX9lCXSiOGWNR70XZcJo
+Content-Type: application/json
+
+{
+    "title": "프로젝트 아카이빙",
+    "slug": "project-archiving"
+}
