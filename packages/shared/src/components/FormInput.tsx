@@ -9,7 +9,8 @@ export interface FormInputProps {
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;
-  onChange?: (value: string) => void;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
   onBlur?: React.FocusEventHandler<HTMLInputElement>;
   error?: string;
   helper?: string;
@@ -26,6 +27,7 @@ export function FormInput({
   required = false,
   disabled = false,
   onChange,
+  onKeyDown,
   onBlur,
   error,
   helper,
@@ -57,7 +59,8 @@ export function FormInput({
         placeholder={placeholder}
         value={value}
         disabled={disabled}
-        onChange={(e) => onChange?.(e.target.value)}
+        onChange={onChange}
+        onKeyDown={onKeyDown}
         onBlur={onBlur}
       />
       {error && <p className="text-xs text-red-500 mt-0.5">{error}</p>}

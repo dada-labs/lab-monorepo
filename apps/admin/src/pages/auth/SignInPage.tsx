@@ -73,7 +73,7 @@ export default function SignInPage() {
 
   return (
     <div className="w-full max-w-sm space-y-8 rounded-lg bg-white">
-      <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+      <form className="mt-8 space-y-10" onSubmit={handleSubmit}>
         <div className="space-y-4">
           <FormInput
             label="이메일"
@@ -81,7 +81,8 @@ export default function SignInPage() {
             required
             placeholder="email@example.com"
             value={email}
-            onChange={(value: string) => {
+            onChange={(e) => {
+              const value = e.target.value;
               setEmail(value);
               setEmailTouched(false);
             }}
@@ -98,7 +99,8 @@ export default function SignInPage() {
             required
             placeholder={VALIDATION_MESSAGES.PASSWORD.REQUIRED}
             value={password}
-            onChange={(value: string) => {
+            onChange={(e) => {
+              const value = e.target.value;
               setPassword(value);
               setPasswordTouched(false);
             }}

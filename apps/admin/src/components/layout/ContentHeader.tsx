@@ -1,6 +1,7 @@
 import { FormInput, Button } from "@shared";
 import { useState } from "react";
 import { Plus } from "@shared/icons";
+import { Link } from "react-router-dom";
 
 export default function ContentHeader() {
   const [keyword, setKeyword] = useState("");
@@ -18,10 +19,12 @@ export default function ContentHeader() {
         </form>
       </div>
       <div className="flex items-center gap-2">
-        <Button size="md">
-          <Plus className="w-4 h-4" />
-          <span className="font-medium">프로젝트 추가</span>
-        </Button>
+        <Link to="/project/write">
+          <Button size="md">
+            <Plus className="w-4 h-4" />
+            <span className="font-medium">프로젝트 추가</span>
+          </Button>
+        </Link>
       </div>
     </header>
   );
