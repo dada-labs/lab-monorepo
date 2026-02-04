@@ -1,6 +1,11 @@
 import { projectRepository } from "../repositories/projectRepository.js";
 import { ProjectStatus, UserRole, Visibility } from "@prisma/client";
 import type { AuthUser } from "../types/express.js";
+import type { CreateProjectPayload, UpdateProjectPayload } from "@shared";
+import {
+  deleteFromCloudinary,
+  uploadToCloudinary,
+} from "src/utils/cloudinary.js";
 
 export class ProjectService {
   private validateAuth(currentUser: AuthUser) {
@@ -25,37 +30,56 @@ export class ProjectService {
 
   async createProject(
     currentUser: AuthUser,
-    projectData: {
-      slug: string;
-      title: string;
-      oneLine: string;
-      description?: string;
-      liveUrl?: string;
-      githubUrl?: string;
-      status: string;
-      visibility: string;
-      thumbnailId?: string;
-      startedAt: Date;
-      endedAt: Date;
-    },
-    techs: string[],
-    thumbnail?: any,
-    attachments?: any[]
+    dto: CreateProjectPayload,
+    files: { thumbnail?: Express.Multer.File[]; docs?: Express.Multer.File[] }
   ) {
     // 관리 권한 확인
     this.validateAuth(currentUser);
 
     // 태그는 최소 1개 이상, 최대 10개
-    this.validateTechTags(techs);
+    this.validateTechTags(dto.techs);
+
+    // 썸네일 업로드
+    let thumbnail = undefined;
+    if (files.thumbnail?.[0]) {
+      const res: any = await uploadToCloudinary(
+        files.thumbnail[0],
+        "thumbnails"
+      );
+      thumbnail = {
+        url: res.secure_url,
+        key: res.public_id,
+        fileName: files.thumbnail[0].originalname,
+        fileType: files.thumbnail[0].mimetype,
+        fileSize: res.bytes,
+      };
+    }
+
+    // 첨부파일 다중 업로드
+    const attachments = [];
+    if (files.docs) {
+      for (const file of files.docs) {
+        const res: any = await uploadToCloudinary(file, "attachments");
+        attachments.push({
+          url: res.secure_url,
+          key: res.public_id,
+          fileName: file.originalname,
+          fileType: file.mimetype,
+          fileSize: res.bytes,
+        });
+      }
+    }
 
     const result = await projectRepository.create(
       {
-        ...projectData,
-        status: projectData.status as ProjectStatus,
-        visibility: projectData.visibility as Visibility,
-        authorId: currentUser.userId,
+        ...dto,
+        status: dto.status as ProjectStatus,
+        visibility: dto.visibility as Visibility,
       },
-      techs
+      currentUser.userId,
+      dto.techs,
+      thumbnail,
+      attachments
     );
 
     return result;
@@ -64,21 +88,62 @@ export class ProjectService {
   async updateProject(
     currentUser: AuthUser,
     id: string,
-    projectData: any,
-    techs?: string[]
+    dto: UpdateProjectPayload,
+    files?: { thumbnail?: Express.Multer.File[]; docs?: Express.Multer.File[] }
   ) {
     // 관리 권한 확인
     this.validateAuth(currentUser);
 
-    const project = await projectRepository.findById(id);
-    if (!project) {
+    const existingProject = await projectRepository.findById(id);
+    if (!existingProject) {
       throw new Error("일치하는 프로젝트 ID가 없습니다.");
     }
 
     // 태그가 있다면, 최소 1개 이상, 최대 10개
-    this.validateTechTags(techs);
+    this.validateTechTags(dto.techs);
 
-    return await projectRepository.update(id, projectData, techs);
+    let thumbnailData = undefined;
+    if (files?.thumbnail?.[0]) {
+      // 기존 썸네일이 있다면 Cloudinary에서 삭제
+      if (existingProject.thumbnail?.key) {
+        await deleteFromCloudinary(existingProject.thumbnail.key);
+      }
+
+      // 새 썸네일 업로드
+      const res: any = await uploadToCloudinary(
+        files.thumbnail[0],
+        "thumbnails"
+      );
+      thumbnailData = {
+        url: res.secure_url,
+        key: res.public_id,
+        fileName: files.thumbnail[0].originalname,
+        fileType: files.thumbnail[0].mimetype,
+        fileSize: res.bytes,
+      };
+    }
+    // 첨부파일 추가 로직
+    const newAttachments = [];
+    if (files?.docs) {
+      for (const file of files.docs) {
+        const res: any = await uploadToCloudinary(file, "attachments");
+        newAttachments.push({
+          url: res.secure_url,
+          key: res.public_id,
+          fileName: file.originalname,
+          fileType: file.mimetype,
+          fileSize: res.bytes,
+        });
+      }
+    }
+
+    return await projectRepository.update(
+      id,
+      dto,
+      dto.techs,
+      thumbnailData,
+      newAttachments
+    );
   }
 
   async deleteProject(currentUser: AuthUser, id: string) {

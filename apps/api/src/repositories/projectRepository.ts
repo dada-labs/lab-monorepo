@@ -1,28 +1,56 @@
 import type { Prisma, ProjectStatus, Visibility } from "@prisma/client";
 import prisma from "../config/prisma.js";
+import type { CreateProjectPayload, UpdateProjectPayload } from "@shared";
 
 export const projectRepository = {
   // 생성
-  async create(data: Prisma.ProjectUncheckedCreateInput, techs: string[]) {
+  async create(
+    data: CreateProjectPayload,
+    userId: string,
+    techs: string[],
+    thumbnail?: any,
+    attachments?: any[]
+  ) {
     return prisma.project.create({
       data: {
         ...data,
+        authorId: userId,
         techs: {
           connectOrCreate: techs.map((name) => ({
             where: { name },
             create: { name },
           })),
         },
+        // 썸네일
+        ...(thumbnail && {
+          thumbnail: { create: thumbnail },
+        }),
+        // 첨부파일
+        ...(attachments &&
+          attachments.length > 0 && {
+            attachments: {
+              create: attachments.map((attr) => ({
+                file: { create: attr },
+              })),
+            },
+          }),
       },
       include: {
         techs: true,
         thumbnail: true,
+        attachments: { include: { file: true } },
       },
     });
   },
 
   // 수정
-  async update(id: string, data: any, techs?: string[]) {
+  async update(
+    id: string,
+    data: any,
+    techs?: string[],
+    thumbnail?: any,
+    attachments?: any[]
+  ) {
     return await prisma.project.update({
       where: { id },
       data: {
@@ -36,6 +64,21 @@ export const projectRepository = {
             })),
           },
         }),
+        ...(thumbnail && {
+          thumbnail: {
+            delete: true, // 기존 썸네일 DB 레코드 삭제
+            create: thumbnail,
+          },
+        }),
+        // 첨부파일 추가
+        ...(attachments &&
+          attachments.length > 0 && {
+            attachments: {
+              create: attachments.map((attr) => ({
+                file: { create: attr },
+              })),
+            },
+          }),
       },
       include: { techs: true },
     });
@@ -52,6 +95,10 @@ export const projectRepository = {
   async findById(id: string) {
     return prisma.project.findUnique({
       where: { id },
+      include: {
+        thumbnail: true,
+        attachments: { include: { file: true } },
+      },
     });
   },
 

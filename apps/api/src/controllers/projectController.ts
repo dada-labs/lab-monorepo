@@ -6,12 +6,15 @@ const projectService = new ProjectService();
 export const createProject = async (req: Request, res: Response) => {
   try {
     const currentUser = req.user!;
-    const { techs, ...projectData } = req.body;
+    const files = req.files as {
+      thumbnail?: Express.Multer.File[];
+      docs?: Express.Multer.File[];
+    };
 
     const result = await projectService.createProject(
       currentUser,
-      projectData,
-      techs
+      req.body,
+      files
     );
 
     return res.status(200).json({
@@ -30,14 +33,17 @@ export const createProject = async (req: Request, res: Response) => {
 export const updateProject = async (req: Request, res: Response) => {
   try {
     const currentUser = req.user!;
+    const files = req.files as {
+      thumbnail?: Express.Multer.File[];
+      docs?: Express.Multer.File[];
+    };
 
     const { id } = req.params;
-    const { techs, ...projectData } = req.body;
     const result = await projectService.updateProject(
       currentUser,
       id as string,
-      projectData,
-      techs
+      req.body,
+      files
     );
     res.status(200).json(result);
   } catch (error: any) {
