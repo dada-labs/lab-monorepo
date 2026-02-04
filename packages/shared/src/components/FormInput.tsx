@@ -3,7 +3,7 @@ import clsx from "clsx";
 
 export interface FormInputProps {
   label?: string;
-  type?: "text" | "email" | "password" | "tel" | "url"; // 타입 확장
+  type?: "text" | "email" | "password" | "tel" | "url" | "date"; // 타입 확장
   size?: "lg" | "md" | "sm";
   value: string;
   placeholder?: string;

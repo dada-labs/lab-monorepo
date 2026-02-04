@@ -28,6 +28,18 @@ export class ProjectService {
     }
   }
 
+  // 문자열로 들어온 techs를 배열로 변환
+  private parseTechs(techs: any): string[] {
+    if (typeof techs === "string") {
+      try {
+        return JSON.parse(techs);
+      } catch {
+        return [];
+      }
+    }
+    return Array.isArray(techs) ? techs : [];
+  }
+
   async createProject(
     currentUser: AuthUser,
     dto: CreateProjectPayload,
@@ -36,8 +48,9 @@ export class ProjectService {
     // 관리 권한 확인
     this.validateAuth(currentUser);
 
+    const techsArray = this.parseTechs(dto.techs);
     // 태그는 최소 1개 이상, 최대 10개
-    this.validateTechTags(dto.techs);
+    this.validateTechTags(techsArray);
 
     // 썸네일 업로드
     let thumbnail = undefined;
@@ -77,7 +90,7 @@ export class ProjectService {
         visibility: dto.visibility as Visibility,
       },
       currentUser.userId,
-      dto.techs,
+      techsArray,
       thumbnail,
       attachments
     );
@@ -99,8 +112,9 @@ export class ProjectService {
       throw new Error("일치하는 프로젝트 ID가 없습니다.");
     }
 
-    // 태그가 있다면, 최소 1개 이상, 최대 10개
-    this.validateTechTags(dto.techs);
+    const techsArray = this.parseTechs(dto.techs);
+    // 태그는 최소 1개 이상, 최대 10개
+    this.validateTechTags(techsArray);
 
     let thumbnailData = undefined;
     if (files?.thumbnail?.[0]) {
@@ -140,7 +154,7 @@ export class ProjectService {
     return await projectRepository.update(
       id,
       dto,
-      dto.techs,
+      techsArray,
       thumbnailData,
       newAttachments
     );

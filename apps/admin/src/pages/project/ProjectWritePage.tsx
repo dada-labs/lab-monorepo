@@ -1,7 +1,14 @@
-import { Button, FormInput, type Visibility } from "@shared";
+import {
+  Button,
+  FormInput,
+  FormTextArea,
+  SelectorProjectStatus,
+  type ProjectStatus,
+  type Visibility,
+} from "@shared";
 import { useState } from "react";
 import { Image, Link as LinkIcon, UploadCloud, X } from "@shared/icons";
-import { FormTextArea } from "../../../../../packages/shared/src/components/FormTextArea";
+import { createProject } from "@/lib/project";
 
 export default function ProjectWritePage() {
   const [formData, setFormData] = useState({
@@ -12,9 +19,12 @@ export default function ProjectWritePage() {
     highlights: "",
     liveUrl: "",
     githubUrl: "",
+    startedAt: "",
+    endedAt: "",
     techInput: "", // 현재 입력 중인 태그 텍스트
   });
   const [techs, setTechs] = useState<string[]>([]); // 선택된 태그 배열
+  const [status, setStatus] = useState<ProjectStatus>("COMPLETED");
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null); // 썸네일 미리보기용
   const [docs, setDocs] = useState<File[]>([]);
@@ -95,6 +105,7 @@ export default function ProjectWritePage() {
     data.append("liveUrl", formData.liveUrl);
     data.append("githubUrl", formData.githubUrl);
     data.append("visibility", visibility);
+    data.append("status", status);
 
     // 태그 배열, 문자열 처리
     data.append("techs", JSON.stringify(techs));
@@ -105,7 +116,19 @@ export default function ProjectWritePage() {
       Array.from(docs).forEach((file) => data.append("docs", file));
     }
 
-    // api 연동
+    try {
+      const response = await createProject(data);
+      if (response.success) {
+        console.log(`${visibility} 상태로 서버 전송 완료!`, data);
+        alert(
+          visibility === "PUBLIC"
+            ? "프로젝트가 게시되었습니다."
+            : "임시저장 되었습니다."
+        );
+      }
+    } catch (err) {
+      console.error("저장 실패:", err);
+    }
   };
   return (
     <>
@@ -169,7 +192,7 @@ export default function ProjectWritePage() {
             <div className="flex flex-col gap-4">
               <FormInput
                 type="text"
-                value=""
+                value={formData.slug}
                 label="프로젝트 경로(slug)"
                 placeholder="슬러그를 입력해 주세요."
                 required
@@ -179,7 +202,7 @@ export default function ProjectWritePage() {
               />
               <FormInput
                 type="text"
-                value=""
+                value={formData.title}
                 label="제목"
                 placeholder="제목을 입력해 주세요."
                 required
@@ -189,13 +212,40 @@ export default function ProjectWritePage() {
               />
               <FormInput
                 type="text"
-                value=""
+                value={formData.oneLine}
                 label="한줄 소개"
                 placeholder="한줄 소개말을 입력해 주세요."
                 required
                 onChange={(e) =>
                   setFormData({ ...formData, oneLine: e.target.value })
                 }
+              />
+              <div className="flex gap-2">
+                <FormInput
+                  label="시작일"
+                  type="date"
+                  placeholder="YYYY-MM-DD"
+                  value={formData.startedAt}
+                  onChange={(e) =>
+                    setFormData({ ...formData, startedAt: e.target.value })
+                  }
+                />
+
+                {/* 종료일 */}
+                <FormInput
+                  label="종료일"
+                  type="date"
+                  placeholder="YYYY-MM-DD"
+                  value={formData.endedAt}
+                  onChange={(e) =>
+                    setFormData({ ...formData, endedAt: e.target.value })
+                  }
+                />
+              </div>
+              <SelectorProjectStatus
+                value={status}
+                selectName="진행 상태"
+                onChange={setStatus}
               />
               <FormTextArea
                 label="주요 성과"

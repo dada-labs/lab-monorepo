@@ -30,8 +30,8 @@ export interface ProjectBase {
 
 export interface CreateProjectPayload extends ProjectBase {
   techs: string[]; // TechTag name 배열
-  thumbnailId?: string; // 선택적 썸네일 ID
-  attachmentIds?: string[]; // 선택적 첨부파일 ID들
+  thumbnail?: File | null; // 실제 선택된 이미지 파일 객체
+  docs?: File[];
 }
 
 export interface UpdateProjectPayload extends Partial<CreateProjectPayload> {}
@@ -65,7 +65,7 @@ export interface AttachmentResponse {
   fileSize: number;
 }
 
-export interface ProjectDetailResponse extends ProjectBase {
+export interface ProjectResponse extends ProjectBase {
   id: string;
   viewCount: number;
   createdAt: Date | string;
@@ -78,4 +78,9 @@ export interface ProjectDetailResponse extends ProjectBase {
     id: string;
     name: string;
   };
+}
+export interface ProjectApiResponse {
+  success: boolean;
+  data: ProjectResponse | null;
+  message?: string;
 }
