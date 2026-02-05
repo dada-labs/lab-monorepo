@@ -20,6 +20,7 @@ export const createProject = async (req: Request, res: Response) => {
     return res.status(200).json({
       success: true,
       data: result,
+      message: "프로젝트가 정상적으로 등록되었습니다!",
     });
   } catch (error: any) {
     console.error("Project Create Error:", error);
@@ -45,7 +46,11 @@ export const updateProject = async (req: Request, res: Response) => {
       req.body,
       files
     );
-    res.status(200).json(result);
+    res.status(200).json({
+      success: true,
+      data: result,
+      message: "프로젝트 정보가 업데이트 되었습니다!",
+    });
   } catch (error: any) {
     res.status(400).json({ success: false, message: error.message });
   }

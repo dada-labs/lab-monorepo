@@ -1,11 +1,19 @@
 import { projectRepository } from "../repositories/projectRepository.js";
 import { ProjectStatus, UserRole, Visibility } from "@prisma/client";
 import type { AuthUser } from "../types/express.js";
-import type { CreateProjectPayload, UpdateProjectPayload } from "@shared";
+import type {
+  CloudinaryUploadResponse,
+  CreateProjectDto,
+  CreateProjectPayload,
+  FileBase,
+  UpdateProjectDto,
+  UpdateProjectPayload,
+} from "@shared";
 import {
   deleteFromCloudinary,
   uploadToCloudinary,
 } from "src/utils/cloudinary.js";
+import prisma from "src/config/prisma.js";
 
 export class ProjectService {
   private validateAuth(currentUser: AuthUser) {
@@ -42,7 +50,7 @@ export class ProjectService {
 
   async createProject(
     currentUser: AuthUser,
-    dto: CreateProjectPayload,
+    dto: CreateProjectDto,
     files: { thumbnail?: Express.Multer.File[]; docs?: Express.Multer.File[] }
   ) {
     // 관리 권한 확인
@@ -101,63 +109,79 @@ export class ProjectService {
   async updateProject(
     currentUser: AuthUser,
     id: string,
-    dto: UpdateProjectPayload,
+    dto: UpdateProjectDto,
     files?: { thumbnail?: Express.Multer.File[]; docs?: Express.Multer.File[] }
   ) {
-    // 관리 권한 확인
     this.validateAuth(currentUser);
-
     const existingProject = await projectRepository.findById(id);
-    if (!existingProject) {
-      throw new Error("일치하는 프로젝트 ID가 없습니다.");
-    }
+    if (!existingProject) throw new Error("프로젝트를 찾을 수 없습니다.");
 
     const techsArray = this.parseTechs(dto.techs);
-    // 태그는 최소 1개 이상, 최대 10개
-    this.validateTechTags(techsArray);
+    const uploadedFiles: string[] = []; // 롤백을 위한 public_id 추적
 
-    let thumbnailData = undefined;
-    if (files?.thumbnail?.[0]) {
-      // 기존 썸네일이 있다면 Cloudinary에서 삭제
-      if (existingProject.thumbnail?.key) {
-        await deleteFromCloudinary(existingProject.thumbnail.key);
-      }
+    try {
+      // 1. 이미지/파일 업로드 (Cloudinary)
+      let thumbnailData: FileBase | undefined = undefined;
+      if (files?.thumbnail?.[0]) {
+        const res = (await uploadToCloudinary(
+          files.thumbnail[0],
+          "thumbnails"
+        )) as CloudinaryUploadResponse;
 
-      // 새 썸네일 업로드
-      const res: any = await uploadToCloudinary(
-        files.thumbnail[0],
-        "thumbnails"
-      );
-      thumbnailData = {
-        url: res.secure_url,
-        key: res.public_id,
-        fileName: files.thumbnail[0].originalname,
-        fileType: files.thumbnail[0].mimetype,
-        fileSize: res.bytes,
-      };
-    }
-    // 첨부파일 추가 로직
-    const newAttachments = [];
-    if (files?.docs) {
-      for (const file of files.docs) {
-        const res: any = await uploadToCloudinary(file, "attachments");
-        newAttachments.push({
+        uploadedFiles.push(res.public_id);
+        thumbnailData = {
           url: res.secure_url,
           key: res.public_id,
-          fileName: file.originalname,
-          fileType: file.mimetype,
+          fileName: files.thumbnail[0].originalname,
+          fileType: files.thumbnail[0].mimetype,
           fileSize: res.bytes,
-        });
+        };
       }
-    }
 
-    return await projectRepository.update(
-      id,
-      dto,
-      techsArray,
-      thumbnailData,
-      newAttachments
-    );
+      const newAttachments: FileBase[] = [];
+      if (files?.docs) {
+        for (const file of files.docs) {
+          const res = (await uploadToCloudinary(
+            file,
+            "attachments"
+          )) as CloudinaryUploadResponse;
+
+          uploadedFiles.push(res.public_id);
+          newAttachments.push({
+            url: res.secure_url,
+            key: res.public_id,
+            fileName: file.originalname,
+            fileType: file.mimetype,
+            fileSize: res.bytes,
+          });
+        }
+      }
+
+      // 2. DB 트랜잭션 실행
+      const result = await prisma.$transaction(async (tx) => {
+        // 기존 썸네일 삭제 (DB 성공 확신 시점에 Cloudinary에서 삭제)
+        if (thumbnailData && existingProject.thumbnail?.key) {
+          await deleteFromCloudinary(existingProject.thumbnail.key);
+        }
+
+        return await projectRepository.update(
+          id,
+          dto,
+          techsArray,
+          thumbnailData,
+          newAttachments,
+          tx
+        );
+      });
+
+      return result;
+    } catch (error) {
+      // 3. 에러 발생 시 롤백: 방금 업로드한 파일들 Cloudinary에서 삭제
+      for (const publicId of uploadedFiles) {
+        await deleteFromCloudinary(publicId);
+      }
+      throw new Error("파일 업로드 중 에러가 발생했습니다.");
+    }
   }
 
   async deleteProject(currentUser: AuthUser, id: string) {

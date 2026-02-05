@@ -19,6 +19,7 @@ export interface ProjectBase {
   title: string;
   oneLine: string;
   description?: string;
+  highlights?: string;
   liveUrl?: string;
   githubUrl?: string;
   status: ProjectStatus;
@@ -34,7 +35,12 @@ export interface CreateProjectPayload extends ProjectBase {
   docs?: File[];
 }
 
-export interface UpdateProjectPayload extends Partial<CreateProjectPayload> {}
+export interface UpdateProjectPayload extends Partial<CreateProjectPayload> {
+  id: string;
+}
+
+export type CreateProjectDto = Omit<CreateProjectPayload, "thumbnail" | "docs">;
+export type UpdateProjectDto = Omit<UpdateProjectPayload, "thumbnail" | "docs">;
 
 export interface ProjectResponse extends ProjectBase {
   id: string;
@@ -48,21 +54,29 @@ export interface TechTagResponse {
   name: string;
 }
 
-export interface Attachment {
-  id: string;
+export interface FileBase {
   url: string;
   key: string;
   fileName: string;
   fileType: string;
   fileSize: number;
 }
-
+export interface Attachment extends FileBase {
+  id: string;
+}
 export interface AttachmentResponse {
   id: string;
   url: string;
   fileName: string;
   fileType: string;
   fileSize: number;
+}
+
+export interface CloudinaryUploadResponse {
+  secure_url: string;
+  public_id: string;
+  bytes: number;
+  [key: string]: any;
 }
 
 export interface ProjectResponse extends ProjectBase {

@@ -1,20 +1,37 @@
 import type { Prisma, ProjectStatus, Visibility } from "@prisma/client";
 import prisma from "../config/prisma.js";
-import type { CreateProjectPayload, UpdateProjectPayload } from "@shared";
+import type {
+  CreateProjectDto,
+  CreateProjectPayload,
+  FileBase,
+  ProjectBase,
+  ProjectResponse,
+  UpdateProjectDto,
+  UpdateProjectPayload,
+} from "@shared";
 
 export const projectRepository = {
   // 생성
   async create(
-    data: CreateProjectPayload,
+    data: CreateProjectDto,
     userId: string,
     techs: string[],
     thumbnail?: any,
     attachments?: any[]
   ) {
+    const {
+      startedAt,
+      endedAt,
+      thumbnailId,
+      techs: _techs,
+      ...createData
+    } = data;
     return prisma.project.create({
       data: {
-        ...data,
-        authorId: userId,
+        ...createData,
+        startedAt: startedAt ? new Date(startedAt) : null,
+        endedAt: endedAt ? new Date(endedAt) : null,
+        author: { connect: { id: userId } },
         techs: {
           connectOrCreate: techs.map((name) => ({
             where: { name },
@@ -46,31 +63,38 @@ export const projectRepository = {
   // 수정
   async update(
     id: string,
-    data: any,
+    data: UpdateProjectDto,
     techs?: string[],
-    thumbnail?: any,
-    attachments?: any[]
+    thumbnail?: FileBase,
+    attachments?: FileBase[],
+    tx?: Prisma.TransactionClient // 트랜잭션 클라이언트 주입 허용
   ) {
-    return await prisma.project.update({
+    const { id: _id, thumbnailId, techs: _techs, ...updateData } = data;
+    const client = tx || prisma;
+
+    return await client.project.update({
       where: { id },
       data: {
-        ...data,
+        ...updateData,
         ...(techs && {
           techs: {
-            set: [],
+            set: [], // 기존 관계 끊기
             connectOrCreate: techs.map((name) => ({
               where: { name },
               create: { name },
             })),
           },
         }),
+        // 썸네일: 기존 것이 있다면 update, 없으면 create = upsert
         ...(thumbnail && {
           thumbnail: {
-            delete: true, // 기존 썸네일 DB 레코드 삭제
-            create: thumbnail,
+            upsert: {
+              create: thumbnail,
+              update: thumbnail,
+            },
           },
         }),
-        // 첨부파일 추가
+        // 첨부파일 추가 (기존 파일 유지 + 새 파일 추가)
         ...(attachments &&
           attachments.length > 0 && {
             attachments: {
@@ -80,7 +104,11 @@ export const projectRepository = {
             },
           }),
       },
-      include: { techs: true },
+      include: {
+        techs: true,
+        thumbnail: true,
+        attachments: { include: { file: true } },
+      },
     });
   },
 

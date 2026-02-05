@@ -22,7 +22,7 @@ export function SelectorProjectStatus({
   return (
     <div className="flex flex-col gap-1">
       {selectName && (
-        <label className="text-sm font-medium text-gray-700 lg:text-base">
+        <label className="text-sm font-medium text-gray-700">
           {selectName}
         </label>
       )}
