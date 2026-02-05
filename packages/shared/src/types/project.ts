@@ -93,8 +93,24 @@ export interface ProjectResponse extends ProjectBase {
     name: string;
   };
 }
+
+export type ProjectItemResponse = Omit<ProjectResponse, "attachments">;
 export interface ProjectApiResponse {
   success: boolean;
   data: ProjectResponse | null;
+  message?: string;
+}
+
+export interface MetaData {
+  totalCount: number;
+  currentPage: number;
+  totalPages: number;
+}
+export interface ProjectListApiResponse {
+  success: boolean;
+  data: {
+    projects: ProjectItemResponse[];
+    meta: MetaData | null;
+  };
   message?: string;
 }

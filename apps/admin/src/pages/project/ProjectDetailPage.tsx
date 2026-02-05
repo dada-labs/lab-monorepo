@@ -88,7 +88,7 @@ export default function ProjectEditPage() {
                 <dt className="">작업 기간</dt>
                 <dd className="font-medium">
                   {formatDate(project.startedAt) || "-"}
-                  {project.endedAt && formatDate(project.startedAt)}
+                  {project.endedAt && ` ~ ${formatDate(project.endedAt)}`}
                 </dd>
               </dl>
             )}
