@@ -37,6 +37,7 @@ export default function ProjectEditPage() {
 
   // 3. 수정 핸들러 (updateProject API 호출)
   const handleSubmit = async (data: FormData) => {
+    setIsSubmitting(true);
     try {
       console.log("수정 요청 시작..."); // 디버깅용
       const response = await updateProject(id!, data);
@@ -72,7 +73,6 @@ export default function ProjectEditPage() {
             initialData={project}
             onSubmit={handleSubmit}
             isSubmitting={isSubmitting}
-            setIsSubmitting={setIsSubmitting}
           />
         )}
       </div>

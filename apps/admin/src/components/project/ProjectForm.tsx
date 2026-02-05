@@ -17,7 +17,6 @@ interface ProjectFormProps {
   mode: "CREATE" | "EDIT";
   onSubmit: (data: FormData) => Promise<void>;
   isSubmitting: boolean;
-  setIsSubmitting: (loading: boolean) => void;
 }
 
 export default function ProjectForm({
@@ -25,8 +24,9 @@ export default function ProjectForm({
   mode,
   onSubmit,
   isSubmitting,
-  setIsSubmitting,
 }: ProjectFormProps) {
+  const [isFormLoading, setIsFormLoading] = useState(false);
+
   // 1. 초기값 설정 (수정 시에는 initialData 사용, 등록 시에는 빈 값)
   const [formData, setFormData] = useState({
     title: initialData?.title || "",
@@ -120,30 +120,33 @@ export default function ProjectForm({
       return;
     }
 
-    setIsSubmitting(true);
+    setIsFormLoading(true);
+    try {
+      // FormData 생성
+      const data = new FormData();
+      data.append("title", formData.title);
+      data.append("slug", formData.slug);
+      data.append("oneLine", formData.oneLine);
+      data.append("description", formData.description);
+      data.append("highlights", formData.highlights);
+      data.append("liveUrl", formData.liveUrl);
+      data.append("githubUrl", formData.githubUrl);
+      data.append("visibility", visibility);
+      data.append("status", status);
 
-    // FormData 생성
-    const data = new FormData();
-    data.append("title", formData.title);
-    data.append("slug", formData.slug);
-    data.append("oneLine", formData.oneLine);
-    data.append("description", formData.description);
-    data.append("highlights", formData.highlights);
-    data.append("liveUrl", formData.liveUrl);
-    data.append("githubUrl", formData.githubUrl);
-    data.append("visibility", visibility);
-    data.append("status", status);
+      // 태그 배열, 문자열 처리
+      data.append("techs", JSON.stringify(techs));
 
-    // 태그 배열, 문자열 처리
-    data.append("techs", JSON.stringify(techs));
+      // 파일 추가
+      if (thumbnail) data.append("thumbnail", thumbnail);
+      if (docs) {
+        Array.from(docs).forEach((file) => data.append("docs", file));
+      }
 
-    // 파일 추가
-    if (thumbnail) data.append("thumbnail", thumbnail);
-    if (docs) {
-      Array.from(docs).forEach((file) => data.append("docs", file));
+      await onSubmit(data);
+    } finally {
+      setIsFormLoading(false);
     }
-
-    onSubmit(data);
   };
 
   useEffect(() => {
@@ -151,6 +154,8 @@ export default function ProjectForm({
       setPreviewUrl(initialData.thumbnail.url);
     }
   }, [initialData]);
+
+  const isDisabled = isSubmitting || isFormLoading;
 
   return (
     <form
@@ -413,7 +418,7 @@ export default function ProjectForm({
                     onClick={() => {
                       /* 첨부파일 개별 삭제 API 호출 로직 */
                     }}
-                    className="!w-auto  hover:text-red-600"
+                    className="!w-auto hover:text-red-600"
                   >
                     <X size={16} />
                   </Button>
@@ -440,13 +445,10 @@ export default function ProjectForm({
           type="submit"
           name="action"
           value="PUBLIC"
-          disabled={isSubmitting}
+          disabled={isDisabled}
         >
-          {isSubmitting ? (
-            <div className="flex items-center gap-2">
-              {/* 여기에 작은 스피너 아이콘을 넣으면 더 좋습니다 */}
-              <span>처리 중...</span>
-            </div>
+          {isDisabled ? (
+            <span>처리 중...</span>
           ) : mode === "EDIT" ? (
             "수정 완료"
           ) : (

@@ -1,11 +1,15 @@
 import { createProject } from "@/lib/project";
 import ProjectForm from "@/components/project/ProjectForm";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { flushSync } from "react-dom";
 
 export default function ProjectWritePage() {
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (data: FormData) => {
+    setIsSubmitting(true);
     try {
       const response = await createProject(data);
       if (response.success) {
@@ -19,6 +23,8 @@ export default function ProjectWritePage() {
       }
     } catch (err) {
       console.error("저장 실패:", err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
   return (
@@ -30,7 +36,11 @@ export default function ProjectWritePage() {
         </p>
       </div>
       <div>
-        <ProjectForm mode="CREATE" onSubmit={handleSubmit} />
+        <ProjectForm
+          mode="CREATE"
+          onSubmit={handleSubmit}
+          isSubmitting={isSubmitting}
+        />
       </div>
     </>
   );
