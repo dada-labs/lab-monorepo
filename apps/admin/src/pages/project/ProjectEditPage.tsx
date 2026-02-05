@@ -43,9 +43,9 @@ export default function ProjectEditPage() {
       const response = await updateProject(id!, data);
 
       console.log("API 응답 결과:", response);
-      if (response.success) {
+      if (response.success && response.data) {
         alert(response.message);
-        navigate("/project");
+        navigate(`/project/${response.data.id}`);
       }
     } catch (err: any) {
       console.error("수정 실패 상세:", err.response?.data || err.message);
