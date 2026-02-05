@@ -11,6 +11,10 @@
     "moduleResolution": "nodenext",
     "target": "esnext",
     "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@shared": ["../../packages/shared/index.ts"]
+    },
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],

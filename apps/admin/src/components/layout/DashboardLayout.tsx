@@ -11,7 +11,7 @@ export default function DashboardLayout() {
         <div className="flex flex-col flex-1 bg-white">
           <ContentHeader />
           {/* 페이지 컨텐츠 영역 */}
-          <main className="flex-1 overflow-hidden relative px-6 py-4">
+          <main className="flex-1 overflow-y-auto relative px-6 py-4">
             <Outlet />
           </main>
         </div>

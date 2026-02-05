@@ -1,6 +1,19 @@
 import { projectRepository } from "../repositories/projectRepository.js";
 import { ProjectStatus, UserRole, Visibility } from "@prisma/client";
 import type { AuthUser } from "../types/express.js";
+import type {
+  CloudinaryUploadResponse,
+  CreateProjectDto,
+  CreateProjectPayload,
+  FileBase,
+  UpdateProjectDto,
+  UpdateProjectPayload,
+} from "@shared";
+import {
+  deleteFromCloudinary,
+  uploadToCloudinary,
+} from "src/utils/cloudinary.js";
+import prisma from "src/config/prisma.js";
 
 export class ProjectService {
   private validateAuth(currentUser: AuthUser) {
@@ -23,39 +36,71 @@ export class ProjectService {
     }
   }
 
+  // 문자열로 들어온 techs를 배열로 변환
+  private parseTechs(techs: any): string[] {
+    if (typeof techs === "string") {
+      try {
+        return JSON.parse(techs);
+      } catch {
+        return [];
+      }
+    }
+    return Array.isArray(techs) ? techs : [];
+  }
+
   async createProject(
     currentUser: AuthUser,
-    projectData: {
-      slug: string;
-      title: string;
-      oneLine: string;
-      description?: string;
-      liveUrl?: string;
-      githubUrl?: string;
-      status: string;
-      visibility: string;
-      thumbnailId?: string;
-      startedAt: Date;
-      endedAt: Date;
-    },
-    techs: string[],
-    thumbnail?: any,
-    attachments?: any[]
+    dto: CreateProjectDto,
+    files: { thumbnail?: Express.Multer.File[]; docs?: Express.Multer.File[] }
   ) {
     // 관리 권한 확인
     this.validateAuth(currentUser);
 
+    const techsArray = this.parseTechs(dto.techs);
     // 태그는 최소 1개 이상, 최대 10개
-    this.validateTechTags(techs);
+    this.validateTechTags(techsArray);
+
+    // 썸네일 업로드
+    let thumbnail = undefined;
+    if (files.thumbnail?.[0]) {
+      const res: any = await uploadToCloudinary(
+        files.thumbnail[0],
+        "thumbnails"
+      );
+      thumbnail = {
+        url: res.secure_url,
+        key: res.public_id,
+        fileName: files.thumbnail[0].originalname,
+        fileType: files.thumbnail[0].mimetype,
+        fileSize: res.bytes,
+      };
+    }
+
+    // 첨부파일 다중 업로드
+    const attachments = [];
+    if (files.docs) {
+      for (const file of files.docs) {
+        const res: any = await uploadToCloudinary(file, "attachments");
+        attachments.push({
+          url: res.secure_url,
+          key: res.public_id,
+          fileName: file.originalname,
+          fileType: file.mimetype,
+          fileSize: res.bytes,
+        });
+      }
+    }
 
     const result = await projectRepository.create(
       {
-        ...projectData,
-        status: projectData.status as ProjectStatus,
-        visibility: projectData.visibility as Visibility,
-        authorId: currentUser.userId,
+        ...dto,
+        status: dto.status as ProjectStatus,
+        visibility: dto.visibility as Visibility,
       },
-      techs
+      currentUser.userId,
+      techsArray,
+      thumbnail,
+      attachments
     );
 
     return result;
@@ -64,21 +109,79 @@ export class ProjectService {
   async updateProject(
     currentUser: AuthUser,
     id: string,
-    projectData: any,
-    techs?: string[]
+    dto: UpdateProjectDto,
+    files?: { thumbnail?: Express.Multer.File[]; docs?: Express.Multer.File[] }
   ) {
-    // 관리 권한 확인
     this.validateAuth(currentUser);
+    const existingProject = await projectRepository.findById(id);
+    if (!existingProject) throw new Error("프로젝트를 찾을 수 없습니다.");
 
-    const project = await projectRepository.findById(id);
-    if (!project) {
-      throw new Error("일치하는 프로젝트 ID가 없습니다.");
+    const techsArray = this.parseTechs(dto.techs);
+    const uploadedFiles: string[] = []; // 롤백을 위한 public_id 추적
+
+    try {
+      // 1. 이미지/파일 업로드 (Cloudinary)
+      let thumbnailData: FileBase | undefined = undefined;
+      if (files?.thumbnail?.[0]) {
+        const res = (await uploadToCloudinary(
+          files.thumbnail[0],
+          "thumbnails"
+        )) as CloudinaryUploadResponse;
+
+        uploadedFiles.push(res.public_id);
+        thumbnailData = {
+          url: res.secure_url,
+          key: res.public_id,
+          fileName: files.thumbnail[0].originalname,
+          fileType: files.thumbnail[0].mimetype,
+          fileSize: res.bytes,
+        };
+      }
+
+      const newAttachments: FileBase[] = [];
+      if (files?.docs) {
+        for (const file of files.docs) {
+          const res = (await uploadToCloudinary(
+            file,
+            "attachments"
+          )) as CloudinaryUploadResponse;
+
+          uploadedFiles.push(res.public_id);
+          newAttachments.push({
+            url: res.secure_url,
+            key: res.public_id,
+            fileName: file.originalname,
+            fileType: file.mimetype,
+            fileSize: res.bytes,
+          });
+        }
+      }
+
+      // 2. DB 트랜잭션 실행
+      const result = await prisma.$transaction(async (tx) => {
+        // 기존 썸네일 삭제 (DB 성공 확신 시점에 Cloudinary에서 삭제)
+        if (thumbnailData && existingProject.thumbnail?.key) {
+          await deleteFromCloudinary(existingProject.thumbnail.key);
+        }
+
+        return await projectRepository.update(
+          id,
+          dto,
+          techsArray,
+          thumbnailData,
+          newAttachments,
+          tx
+        );
+      });
+
+      return result;
+    } catch (error) {
+      // 3. 에러 발생 시 롤백: 방금 업로드한 파일들 Cloudinary에서 삭제
+      for (const publicId of uploadedFiles) {
+        await deleteFromCloudinary(publicId);
+      }
+      throw new Error("파일 업로드 중 에러가 발생했습니다.");
     }
-
-    // 태그가 있다면, 최소 1개 이상, 최대 10개
-    this.validateTechTags(techs);
-
-    return await projectRepository.update(id, projectData, techs);
   }
 
   async deleteProject(currentUser: AuthUser, id: string) {
