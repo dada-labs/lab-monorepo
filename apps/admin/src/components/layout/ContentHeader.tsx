@@ -1,22 +1,27 @@
-import { FormInput, Button } from "@shared";
-import { useState } from "react";
+import { Button, SearchBar } from "@shared";
 import { Plus } from "@shared/icons";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 export default function ContentHeader() {
-  const [keyword, setKeyword] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const handleProjectSearch = (keyword: string) => {
+    console.log("프로젝트 검색:", keyword);
+    if (keyword) {
+      searchParams.set("keyword", keyword);
+    } else {
+      searchParams.delete("keyword");
+    }
+    setSearchParams(searchParams);
+  };
 
   return (
     <header className="flex items-center justify-between px-6 h-16 bg-white">
       <div className="flex gap-2 w-72">
-        <form className="flex-1">
-          <FormInput
-            type="text"
-            size="md"
-            value={keyword}
-            placeholder="프로젝트 제목을 검색해보세요."
-          />
-        </form>
+        <SearchBar
+          onSearch={handleProjectSearch}
+          initialValue={searchParams.get("keyword") || ""}
+        />
       </div>
       <div className="flex items-center gap-2">
         <Link to="/project/write">

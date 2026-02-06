@@ -197,7 +197,7 @@ export class ProjectService {
     tag?: string;
     status?: string;
   }) {
-    const limit = 12;
+    const limit = 8;
     const page = Math.max(Number(query.page) || 1, 1);
     const skip = (page - 1) * limit;
 
