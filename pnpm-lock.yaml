@@ -93,6 +93,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@dada-lab/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@prisma/client':
         specifier: ^6.19.1
         version: 6.19.2(prisma@6.19.2(typescript@5.9.3))(typescript@5.9.3)
@@ -194,6 +197,9 @@ importers:
 
   packages/shared:
     dependencies:
+      '@dada-lab/shared':
+        specifier: workspace:*
+        version: 'link:'
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
