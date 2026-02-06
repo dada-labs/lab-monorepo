@@ -28,6 +28,7 @@ export interface ProjectBase {
   highlights?: string;
   liveUrl?: string;
   githubUrl?: string;
+  relatedUrl?: string;
   status: ProjectStatus;
   visibility: Visibility;
   thumbnailId?: string;
