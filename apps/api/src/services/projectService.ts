@@ -191,23 +191,29 @@ export class ProjectService {
     return await projectRepository.delete(id);
   }
 
-  async getPaginatedProjects(query: {
-    page?: string;
-    keyword?: string;
-    tag?: string;
-    status?: string;
-  }) {
+  async getPaginatedProjects(
+    query: {
+      page?: string;
+      keyword?: string;
+      tag?: string;
+      status?: string;
+    },
+    visibility?: Visibility
+  ) {
     const limit = 8;
     const page = Math.max(Number(query.page) || 1, 1);
     const skip = (page - 1) * limit;
 
-    const { total, items } = await projectRepository.findProjectsWithFilters({
-      skip,
-      take: limit,
-      ...(query.keyword && { keyword: query.keyword }),
-      ...(query.tag && { tag: query.tag }),
-      ...(query.status && { status: query.status as ProjectStatus }),
-    });
+    const { total, items } = await projectRepository.findProjectsWithFilters(
+      {
+        skip,
+        take: limit,
+        ...(query.keyword && { keyword: query.keyword }),
+        ...(query.tag && { tag: query.tag }),
+        ...(query.status && { status: query.status as ProjectStatus }),
+      },
+      visibility
+    );
 
     return {
       projects: items,

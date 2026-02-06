@@ -147,13 +147,16 @@ export const projectRepository = {
     });
   },
 
-  async findProjectsWithFilters(params: {
-    skip: number;
-    take: number;
-    keyword?: string;
-    tag?: string;
-    status?: ProjectStatus;
-  }) {
+  async findProjectsWithFilters(
+    params: {
+      skip: number;
+      take: number;
+      keyword?: string;
+      tag?: string;
+      status?: ProjectStatus;
+    },
+    visibility?: Visibility
+  ) {
     const { skip, take, keyword, tag, status } = params;
 
     const where: Prisma.ProjectWhereInput = {
@@ -161,6 +164,7 @@ export const projectRepository = {
         keyword ? { title: { contains: keyword, mode: "insensitive" } } : {},
         tag ? { techs: { some: { name: tag } } } : {},
         status ? { status } : {},
+        visibility ? { visibility } : {},
       ],
     };
 
