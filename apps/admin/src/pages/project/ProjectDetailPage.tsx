@@ -34,27 +34,28 @@ export default function ProjectEditPage() {
     // 예: axios.delete(`/api/posts/${post.id}`)
   };
 
-  useEffect(() => {
-    const fetchProject = async () => {
-      if (!id) return;
+  const fetchProject = async () => {
+    if (!id) return;
 
-      try {
-        const response = await getProjectById(id);
-        if (response.success && response.data) {
-          setProject(response.data);
-        } else {
-          throw new Error(
-            response.message || "프로젝트 정보를 찾을 수 없습니다."
-          );
-        }
-      } catch (err) {
-        console.error(err);
-        alert("데이터를 불러오는데 실패했습니다.");
-        navigate("/project");
-      } finally {
-        setIsLoading(false);
+    try {
+      const response = await getProjectById(id);
+      if (response.success && response.data) {
+        setProject(response.data);
+      } else {
+        throw new Error(
+          response.message || "프로젝트 정보를 찾을 수 없습니다."
+        );
       }
-    };
+    } catch (err) {
+      console.error(err);
+      alert("데이터를 불러오는데 실패했습니다.");
+      navigate("/project");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchProject();
   }, [id, navigate]);
 

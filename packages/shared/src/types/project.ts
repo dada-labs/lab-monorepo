@@ -14,6 +14,12 @@ export const ProjectStatusLabel: Record<ProjectStatus, string> = {
   HOLD: "중단",
 };
 
+export const VisibilityLabel: Record<Visibility, string> = {
+  PUBLIC: "전체 공개",
+  PRIVATE: "비공개",
+  DRAFT: "임시저장",
+};
+
 export interface ProjectBase {
   slug: string;
   title: string;
@@ -113,4 +119,10 @@ export interface ProjectListApiResponse {
     meta: MetaData | null;
   };
   message?: string;
+}
+
+export interface GetProjectListParams {
+  keyword?: string;
+  status?: string;
+  page?: number;
 }

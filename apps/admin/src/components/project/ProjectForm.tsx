@@ -429,7 +429,7 @@ export default function ProjectForm({
       </div>
 
       <div className="flex gap-2">
-        {mode === "EDIT" && formData.visibility !== "PUBLIC" && (
+        {!(mode === "EDIT" && formData.visibility === "PUBLIC") && (
           <Button
             type="submit"
             variant="line"

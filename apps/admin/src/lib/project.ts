@@ -4,6 +4,7 @@ import type {
   ProjectApiResponse,
   CreateProjectPayload,
   ProjectListApiResponse,
+  GetProjectListParams,
 } from "@shared";
 
 export const createProject = async (formData: FormData) => {
@@ -95,9 +96,19 @@ export const updateProject = async (id: string, formData: FormData) => {
   }
 };
 
-export const getProjectList = async () => {
+export const getProjectList = async ({
+  keyword,
+  status,
+  page = 1,
+}: GetProjectListParams) => {
   try {
-    const response = await api.get<ProjectListApiResponse>(`/api/projects`);
+    const response = await api.get<ProjectListApiResponse>("/api/projects", {
+      params: {
+        keyword: keyword || undefined,
+        status: status === "all" ? undefined : status,
+        page,
+      },
+    });
 
     return response.data;
   } catch (error) {
@@ -109,7 +120,7 @@ export const getProjectList = async () => {
         success: false,
         data: null,
         message:
-          serverMessage || "프로젝트 정보를 불러오는 중 오류가 발생했습니다.",
+          serverMessage || "프로젝트 목록을 불러오는 중 오류가 발생했습니다.",
       };
     }
     return {

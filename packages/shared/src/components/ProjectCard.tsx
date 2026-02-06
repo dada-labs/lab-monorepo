@@ -1,5 +1,12 @@
 import React from "react";
-import { ProjectItemResponse, TechTagResponse } from "../types";
+import {
+  ProjectItemResponse,
+  TechTagResponse,
+  VisibilityLabel,
+} from "../types";
+import clsx from "clsx";
+import { Eye } from "../icons";
+import { formatYear } from "../utils";
 
 interface ProjectCardProps {
   project: ProjectItemResponse;
@@ -13,46 +20,68 @@ export const ProjectCard = ({
   LinkComponent = "a", // 일반 a 태그
 }: ProjectCardProps) => {
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-300 bg-white transition-hover hover:shadow-lg">
-      <LinkComponent
-        href={`/project/${project.id}`}
-        to={`/project/${project.id}`}
-        className="block aspect-video w-full relative"
+    <div className="flex flex-col gap-1 h-full">
+      <div className="flex justify-between text-sm">
+        <div className="text-gray-600">
+          <span className="font-bold">{formatYear(project.createdAt)}</span>
+          {` · ${VisibilityLabel[project.visibility]}`}
+        </div>
+        <p className="flex gap-2 items-center text-gray-600">
+          <Eye size={16} className="text-gray-400" />
+          {project.viewCount}
+        </p>
+      </div>
+      <div
+        className={clsx(
+          "flex-1 flex flex-col overflow-hidden rounded-lg border border-gray-300 transition-hover hover:shadow-xl",
+          !project.thumbnail ? "bg-[#fff9dd]" : "bg-white"
+        )}
       >
-        <div className="flex flex-col gap-4 p-6">
-          <div className="">
-            <h3 className="mb-1 text-lg font-bold line-clamp-1">
-              {project.title}
-            </h3>
-            <p className="text-sm text-gray-600 line-clamp-2">
-              {project.oneLine}
-            </p>
+        <LinkComponent
+          href={`/project/${project.id}`}
+          to={`/project/${project.id}`}
+          className="flex-1 flex flex-col justify-between"
+        >
+          <div className="flex flex-col gap-6 p-6">
+            <div className="">
+              <h3 className="mb-1 text-lg font-bold line-clamp-1">
+                {project.title}
+              </h3>
+              <p className="text-sm text-gray-600 line-clamp-2">
+                {project.oneLine}
+              </p>
+            </div>
+            {project.techs.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {project.techs.map((t: TechTagResponse) => (
+                  <div
+                    key={t.id}
+                    className="flex gap-1 items-center text-sm text-primary font-bold bg-primary-lightest border border-primary-light px-2 py-0.5 rounded"
+                  >
+                    #{t.name}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-          {project.techs.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {project.techs.map((t: TechTagResponse) => (
-                <div
-                  key={t.id}
-                  className="flex gap-1 items-center text-sm text-primary font-bold bg-primary-lightest border border-primary-light px-2 py-0.5 rounded"
-                >
-                  #{t.name}
-                </div>
-              ))}
+
+          {/* 이미지 영역 */}
+
+          {project.thumbnail && (
+            <div className="relative w-full aspect-video overflow-hidden">
+              <ImageComponent
+                src={project.thumbnail?.url || "/images/og-image.png"}
+                alt={project.title}
+                fill={ImageComponent !== "img"} // Next.js Image 고려해야함
+                className={clsx(
+                  "object-cover w-full h-full transition-transform duration-300 hover:scale-105",
+                  !project.thumbnail && "grayscale opacity-50"
+                )}
+              />
             </div>
           )}
-        </div>
-
-        {/* 이미지 영역 */}
-
-        <div className="relative w-full aspect-video overflow-hidden">
-          <ImageComponent
-            src={project.thumbnail?.url || "/images/og-image.png"}
-            alt={project.title}
-            fill={ImageComponent !== "img"} // Next.js Image 고려해야함
-            className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
-          />
-        </div>
-      </LinkComponent>
+        </LinkComponent>
+      </div>
     </div>
   );
 };
