@@ -16,6 +16,7 @@ export interface FormInputProps {
   helper?: string;
   className?: string; // 외부에서 스타일 조절을 위한 prop 추가
   name?: string; // 폼 제출 시 필요한 name 추가
+  isIcon?: boolean;
 }
 
 export function FormInput({
@@ -33,6 +34,7 @@ export function FormInput({
   helper,
   className,
   name,
+  isIcon = false,
 }: FormInputProps) {
   return (
     <div className={clsx("flex flex-col gap-1 w-full", className)}>
@@ -54,7 +56,10 @@ export function FormInput({
           error
             ? "border-red-500 focus:border-red-500"
             : "border-gray-300 focus:border-primary",
-          disabled && "bg-gray-100 cursor-not-allowed text-gray-500"
+          disabled && "bg-gray-100 cursor-not-allowed text-gray-500",
+          isIcon && size === "lg" && "pl-12",
+          isIcon && size === "md" && "pl-10",
+          isIcon && size === "sm" && "pl-6"
         )}
         placeholder={placeholder}
         value={value}

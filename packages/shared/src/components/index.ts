@@ -7,3 +7,4 @@ export * from "./ProjectCard.js";
 export * from "./LoadingArea.js";
 export * from "./Pagination.js";
 export * from "./NodataArea.js";
+export * from "./SearchBar.js";
