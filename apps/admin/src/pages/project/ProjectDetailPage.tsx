@@ -2,18 +2,14 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getProjectById } from "@/lib/project";
 import {
-  Button,
   formatDate,
+  ProjectStatusLabel,
+  UrlButton,
   type ProjectResponse,
   type TechTagResponse,
 } from "@shared";
 import ManageDropdown from "@/components/ui/ManageDropdown";
-import {
-  AppWindowMac,
-  Github,
-  BookText,
-  Link as LinkIcon,
-} from "@shared/icons";
+import { Link as LinkIcon } from "@shared/icons";
 
 export default function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -66,7 +62,7 @@ export default function ProjectDetailPage() {
     <>
       <div className="p-8 max-w-3xl mx-auto flex flex-col gap-6">
         <div className="flex flex-col gap-4 pb-6 border-b border-gray-300">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-start">
             <div className="flex flex-wrap gap-2">
               {project.techs.map((t: TechTagResponse) => (
                 <div
@@ -95,7 +91,9 @@ export default function ProjectDetailPage() {
             )}
             <dl className="flex gap-1 text-sm text-gray-600">
               <dt className="">프로젝트 상태</dt>
-              <dd className="font-medium">-</dd>
+              <dd className="font-bold">
+                {ProjectStatusLabel[project.status]}
+              </dd>
             </dl>
           </div>
         </div>
@@ -122,7 +120,7 @@ export default function ProjectDetailPage() {
                 </dd>
               </dl>
             )}
-            {project.attachments && (
+            {project.attachments && project.attachments.length > 0 && (
               <dl className="flex flex-col gap-1">
                 <dt className="font-bold text-lg">첨부파일</dt>
                 <dd className="font-medium text-gray-600">
@@ -145,40 +143,33 @@ export default function ProjectDetailPage() {
               </dl>
             )}
           </div>
-          <div className="pt-10 border-t border-gray-300">
-            <ul className="flex justify-center gap-4">
-              <li>
-                <Link to="" target="_blank">
-                  <Button
-                    variant="none"
-                    className="!bg-gray-200 text-primary !px-1.5 !w-[48px] !rounded-4xl hover:!bg-primary-lightest"
-                  >
-                    <AppWindowMac size={24} />
-                  </Button>
-                </Link>
-              </li>
-              <li>
-                <Link to="" target="_blank">
-                  <Button
-                    variant="none"
-                    className="!bg-gray-800 text-white !px-1.5 !w-[48px] !rounded-4xl hover:!bg-primary"
-                  >
-                    <Github size={24} />
-                  </Button>
-                </Link>
-              </li>
-              <li>
-                <Link to="" target="_blank">
-                  <Button
-                    variant="none"
-                    className="!bg-gray-200 text-primary !px-1.5 !w-[48px] !rounded-4xl hover:!bg-primary-lightest"
-                  >
-                    <BookText size={24} />
-                  </Button>
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {(project.liveUrl || project.githubUrl || project.relatedUrl) && (
+            <div className="pt-10 border-t border-gray-300 flex justify-center gap-4">
+              {project.liveUrl && (
+                <UrlButton
+                  url={project.liveUrl}
+                  urlType="LIVE"
+                  theme="gray"
+                  LinkComponent={Link}
+                />
+              )}
+              {project.githubUrl && (
+                <UrlButton
+                  url={project.githubUrl}
+                  urlType="GITHUB"
+                  LinkComponent={Link}
+                />
+              )}
+              {project.relatedUrl && (
+                <UrlButton
+                  url={project.relatedUrl}
+                  urlType="RELATED"
+                  theme="gray"
+                  LinkComponent={Link}
+                />
+              )}
+            </div>
+          )}
         </div>
       </div>
     </>

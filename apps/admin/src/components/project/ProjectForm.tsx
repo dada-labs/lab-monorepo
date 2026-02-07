@@ -344,7 +344,7 @@ export default function ProjectForm({
           <FormInput
             type="url"
             value={formData.relatedUrl}
-            label="Github Url"
+            label="Related Url"
             placeholder="http://을 포함해서, 연관된 문서 주소(Url)를 입력해 주세요."
             onChange={(e) =>
               setFormData({ ...formData, relatedUrl: e.target.value })
