@@ -1,44 +1,35 @@
-import { useParams, useNavigate, Link } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { getProjectById } from "@/lib/project";
+"use client";
+
+import { getProjectById } from "@/lib/projects";
 import {
   Button,
   formatDate,
+  LoadingArea,
+  ProjectStatusLabel,
   type ProjectResponse,
   type TechTagResponse,
 } from "@shared";
-import ManageDropdown from "@/components/ui/ManageDropdown";
+import { notFound, useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   AppWindowMac,
   Github,
   BookText,
   Link as LinkIcon,
 } from "@shared/icons";
+import Link from "next/link";
 
 export default function ProjectDetailPage() {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const params = useParams();
+  const projectId = params?.id as string;
   const [isLoading, setIsLoading] = useState(true);
   const [project, setProject] = useState<ProjectResponse | null>(null);
 
-  const handleEdit = () => {
-    if (!project) return;
-
-    console.log(`${project.id} 수정 페이지로 이동`);
-    navigate(`/project/edit/${project.id}`);
-  };
-  const handleDelete = () => {
-    if (!project) return;
-
-    console.log(`$${project.id} 프로젝트 삭제 API 호출`);
-    // 예: axios.delete(`/api/posts/${post.id}`)
-  };
-
   const fetchProject = async () => {
-    if (!id) return;
+    if (!projectId) return;
 
     try {
-      const response = await getProjectById(id);
+      const response = await getProjectById(projectId);
       if (response.success && response.data) {
         setProject(response.data);
       } else {
@@ -48,8 +39,6 @@ export default function ProjectDetailPage() {
       }
     } catch (err) {
       console.error(err);
-      alert("데이터를 불러오는데 실패했습니다.");
-      navigate("/project");
     } finally {
       setIsLoading(false);
     }
@@ -57,11 +46,12 @@ export default function ProjectDetailPage() {
 
   useEffect(() => {
     fetchProject();
-  }, [id, navigate]);
+  }, [projectId]);
 
-  if (isLoading) return <div>로딩 중</div>;
-  if (!project) return <div>해당 페이지를 찾을 수 없습니다.</div>;
-
+  if (isLoading) return <LoadingArea />;
+  if (!project) {
+    notFound();
+  }
   return (
     <>
       <div className="p-8 max-w-3xl mx-auto flex flex-col gap-6">
@@ -77,7 +67,6 @@ export default function ProjectDetailPage() {
                 </div>
               ))}
             </div>
-            <ManageDropdown onEdit={handleEdit} onDelete={handleDelete} />
           </div>
           <div className="flex flex-col gap-1">
             <h2 className="text-2xl font-bold">{project.title}</h2>
@@ -95,7 +84,9 @@ export default function ProjectDetailPage() {
             )}
             <dl className="flex gap-1 text-sm text-gray-600">
               <dt className="">프로젝트 상태</dt>
-              <dd className="font-medium">-</dd>
+              <dd className="font-medium font-bold">
+                {ProjectStatusLabel[project.status]}
+              </dd>
             </dl>
           </div>
         </div>
@@ -148,7 +139,7 @@ export default function ProjectDetailPage() {
           <div className="pt-10 border-t border-gray-300">
             <ul className="flex justify-center gap-4">
               <li>
-                <Link to="" target="_blank">
+                <Link href="" target="_blank">
                   <Button
                     variant="none"
                     className="!bg-gray-200 text-primary !px-1.5 !w-[48px] !rounded-4xl hover:!bg-primary-lightest"
@@ -158,7 +149,7 @@ export default function ProjectDetailPage() {
                 </Link>
               </li>
               <li>
-                <Link to="" target="_blank">
+                <Link href="" target="_blank">
                   <Button
                     variant="none"
                     className="!bg-gray-800 text-white !px-1.5 !w-[48px] !rounded-4xl hover:!bg-primary"
@@ -168,7 +159,7 @@ export default function ProjectDetailPage() {
                 </Link>
               </li>
               <li>
-                <Link to="" target="_blank">
+                <Link href="" target="_blank">
                   <Button
                     variant="none"
                     className="!bg-gray-200 text-primary !px-1.5 !w-[48px] !rounded-4xl hover:!bg-primary-lightest"

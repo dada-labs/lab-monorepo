@@ -34,7 +34,7 @@ export const ProjectCard = ({
       <div
         className={clsx(
           "flex-1 flex flex-col overflow-hidden rounded-lg border border-gray-300 transition-hover hover:shadow-xl",
-          !project.thumbnail ? "bg-[#fff9dd]" : "bg-white"
+          !project.thumbnail ? "bg-primary-lightest" : "bg-white"
         )}
       >
         <LinkComponent

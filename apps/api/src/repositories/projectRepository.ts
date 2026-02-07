@@ -1,4 +1,4 @@
-import type { Prisma, ProjectStatus, Visibility } from "@prisma/client";
+import { Visibility, type Prisma, type ProjectStatus } from "@prisma/client";
 import prisma from "../config/prisma.js";
 import type {
   CreateProjectDto,
@@ -188,6 +188,9 @@ export const projectRepository = {
   async findRecentProjects(limit: number) {
     return prisma.project.findMany({
       take: limit,
+      where: {
+        visibility: Visibility.PUBLIC,
+      },
       include: {
         thumbnail: true,
         techs: true,
