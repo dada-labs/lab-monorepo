@@ -62,10 +62,14 @@ api.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      const res = await api.post("/api/auth/refresh");
-      const { accessToken, user } = res.data;
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/auth/refresh`,
+        {},
+        { withCredentials: true }
+      );
+      const { accessToken } = res.data;
+      useAuthStore.getState().setAccessToken(accessToken);
 
-      useAuthStore.getState().setAuth(accessToken, user);
       processQueue(accessToken);
 
       originalRequest.headers.Authorization = `Bearer ${accessToken}`;
