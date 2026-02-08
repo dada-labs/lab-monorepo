@@ -56,8 +56,9 @@ model Project {
     techs       TechTag[]
     highlights  String?
 
-    liveUrl   String?
-    githubUrl String?
+    liveUrl    String?
+    githubUrl  String?
+    relatedUrl String?
 
     viewCount Int @default(0)
 

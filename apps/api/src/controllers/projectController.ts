@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import { ProjectService } from "../services/projectService.js";
+import type { Visibility } from "@prisma/client";
 
 const projectService = new ProjectService();
 
@@ -70,6 +71,26 @@ export const getProjects = async (req: Request, res: Response) => {
     return res.status(400).json({
       success: false,
       message: "프로젝트 목록을 불러오는 중 오류가 발생했습니다.",
+    });
+  }
+};
+
+export const getPublicProjects = async (req: Request, res: Response) => {
+  try {
+    const result = await projectService.getPaginatedProjects(
+      req.query,
+      "PUBLIC" as Visibility
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    console.error("Project List Error:", error);
+    return res.status(400).json({
+      success: false,
+      message: "공개 프로젝트 목록을 불러오는 중 오류가 발생했습니다.",
     });
   }
 };

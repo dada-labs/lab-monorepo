@@ -2,7 +2,6 @@
 import api, { isAxiosError } from "@/lib/api";
 import type {
   ProjectApiResponse,
-  CreateProjectPayload,
   ProjectListApiResponse,
   GetProjectListParams,
 } from "@shared";

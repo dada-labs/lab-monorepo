@@ -1,3 +1,4 @@
+"use client";
 import { useState, useEffect } from "react";
 import { Button } from "./Button";
 import { Search } from "../icons";
@@ -42,7 +43,7 @@ export function SearchBar({
         size="md"
         variant="none"
         type="submit"
-        className="!absolute !w-10 !px-0 !left-0 !top-0 text-gray-600 hover:text-primary"
+        className="!absolute !w-10 !px-0 !left-0 !top-0 text-gray-600"
       >
         <Search size={20} />
       </Button>

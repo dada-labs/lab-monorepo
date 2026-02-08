@@ -1,26 +1,12 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import "tailwindcss";
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* 공통 테마 설정 가져오기 */
+@import "../../../packages/shared/src/styles/theme.css";
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* shared 패키지 내 컴포넌트들의 클래스 추출을 위한 소스 경로 지정 */
+@source "../../../packages/shared/src/**/*.{ts,tsx}";
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
+/* web 프로젝트 자체 소스 경로 (Next.js v4 엔진은 보통 자동 감지하지만 명시하면 안전합니다) */
+@source "./**/*.{ts,tsx}";

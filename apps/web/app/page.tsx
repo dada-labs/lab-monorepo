@@ -1,65 +1,104 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useEffect, useState } from "react";
+import {
+  Button,
+  LoadingArea,
+  NodataArea,
+  ProjectCard,
+  type ProjectItemResponse,
+} from "@shared";
+import Image from "next/image";
+import Link from "next/link";
+import { getRecentProjectList } from "@/lib/projects";
+import clsx from "clsx";
+
+export default function HomePage() {
+  const [projectList, setProjectList] = useState<ProjectItemResponse[] | null>(
+    null
+  );
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProject = async () => {
+      setIsLoading(true);
+      try {
+        const response = await getRecentProjectList();
+        if (response.success && response.data) {
+          setProjectList(response.data.projects);
+        } else {
+          throw new Error(
+            response.message || "프로젝트 정보를 찾을 수 없습니다."
+          );
+        }
+      } catch (err) {
+        console.error(err);
+        alert("데이터를 불러오는데 실패했습니다.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchProject();
+  }, []);
+
+  if (isLoading) return <LoadingArea />;
+  const isProjectList = projectList && projectList?.length > 0;
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      <section className=" bg-primary-light bg-[url('/images/bg_visual.png')] bg-no-repeat bg-cover bg-center rounded-2xl">
+        <div className="h-80 flex flex-col items-center justify-center gap-6 py-20">
+          <div className="flex flex-col gap-2 text-center">
+            <h1 className="text-4xl font-bold text-white">Dada Lab</h1>
+            <p className="text-lg font-medium text-primary">
+              개발 관련 학습 내용 및 프로젝트 기록까지
+            </p>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      </section>
+      <section className="w-full">
+        <div className="flex flex-col py-20">
+          <div className="mb-8 flex flex-col gap-2">
+            <h2 className="text-2xl font-bold">최신 아카이빙</h2>
+            <p className="text-gray-700 text-sm">
+              개발 및 프로젝트 관련한 최신 기록을 확인해 보세요.
+            </p>
+          </div>
+          <div
+            className={clsx(
+              "grid gap-6",
+              isProjectList ? "grid-cols-4" : "grid-cols-1"
+            )}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            {isProjectList ? (
+              projectList.map((project) => (
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  LinkComponent={Link}
+                  ImageComponent={Image}
+                />
+              ))
+            ) : (
+              <NodataArea />
+            )}
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+      <section className="bg-primary-light bg-[url('/images/bg_banner.png')] bg-no-repeat bg-cover bg-center rounded-2xl">
+        <div className="h-80 flex flex-col items-center justify-center gap-6 py-20">
+          <div className="flex flex-col gap-2 text-center">
+            <h2 className="text-3xl font-bold">Dada Lab</h2>
+            <p className="text-lg text-gray-600">
+              개발 과정과 프로젝트들에 대해서 궁금하다면?
+            </p>
+          </div>
+          <div className="flex">
+            <Link href="/project">
+              <Button type="button">프로젝트 문의하기</Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

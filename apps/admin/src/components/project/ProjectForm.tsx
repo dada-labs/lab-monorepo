@@ -36,6 +36,7 @@ export default function ProjectForm({
     highlights: initialData?.highlights || "",
     liveUrl: initialData?.liveUrl || "",
     githubUrl: initialData?.githubUrl || "",
+    relatedUrl: initialData?.relatedUrl || "",
     visibility: initialData?.visibility,
     startedAt: formatDateForInput(initialData?.startedAt) || "",
     endedAt: formatDateForInput(initialData?.endedAt) || "",
@@ -131,6 +132,7 @@ export default function ProjectForm({
       data.append("highlights", formData.highlights);
       data.append("liveUrl", formData.liveUrl);
       data.append("githubUrl", formData.githubUrl);
+      data.append("relatedUrl", formData.relatedUrl);
       data.append("visibility", visibility);
       data.append("status", status);
 
@@ -337,6 +339,15 @@ export default function ProjectForm({
             placeholder="http://을 포함해서, Github 주소(Url)를 입력해 주세요."
             onChange={(e) =>
               setFormData({ ...formData, githubUrl: e.target.value })
+            }
+          />
+          <FormInput
+            type="url"
+            value={formData.relatedUrl}
+            label="Github Url"
+            placeholder="http://을 포함해서, 연관된 문서 주소(Url)를 입력해 주세요."
+            onChange={(e) =>
+              setFormData({ ...formData, relatedUrl: e.target.value })
             }
           />
         </div>

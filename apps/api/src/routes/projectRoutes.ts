@@ -3,8 +3,9 @@ import {
   createProject,
   updateProject,
   getProjects,
-  getProject,
+  getPublicProjects,
   getRecentProjects,
+  getProject,
 } from "../controllers/projectController.js";
 import { authenticateToken } from "../middlewares/authMiddleware.js";
 import { upload } from "src/middlewares/uploadMiddleware.js";
@@ -33,6 +34,7 @@ router.patch(
 
 // 퍼블릭
 router.get("/", getProjects);
+router.get("/public", getPublicProjects);
 router.get("/recent", getRecentProjects);
 router.get("/:id", getProject);
 
