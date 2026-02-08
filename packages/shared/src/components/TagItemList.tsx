@@ -10,7 +10,11 @@ export function TagItemList({ techs, onDelete }: TagItemListProps) {
   return (
     <div className="flex flex-wrap gap-2">
       {techs.map((t: TechTagResponse, idx) => (
-        <TagItem key={t.id || idx} tagName={t.name} onDelete={onDelete} />
+        <TagItem
+          key={t.id || idx}
+          tagName={t.name}
+          {...(onDelete && { onDelete })}
+        />
       ))}
     </div>
   );

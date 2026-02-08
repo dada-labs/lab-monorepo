@@ -7,7 +7,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch src/index.ts",
-    "start": "node dist/index.js",
+    "start": "node dist/apps/api/src/index.js",
+    "build": "prisma generate && tsc && tsc-alias -p tsconfig.json",
     "prisma": "prisma",
     "db:init": "prisma init",
     "db:generate": "prisma generate",
@@ -19,6 +20,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.28.1",
   "dependencies": {
+    "@dada-lab/shared": "workspace:*",
     "@prisma/client": "^6.19.1",
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.9.0",
@@ -27,8 +29,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
-    "multer": "^2.0.2",
-    "@dada-lab/shared": "workspace:*"
+    "multer": "^2.0.2"
   },
   "devDependencies": {
     "@prisma/config": "^7.3.0",
@@ -41,6 +42,7 @@
     "@types/node": "^25.0.10",
     "prisma": "^6.19.1",
     "ts-node-dev": "^2.0.0",
+    "tsc-alias": "^1.8.16",
     "typescript": "^5.9.3"
   }
 }

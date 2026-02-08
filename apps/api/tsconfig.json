@@ -3,7 +3,8 @@
   "compilerOptions": {
     // File Layout
     // "rootDir": "./src",
-    // "outDir": "./dist",
+    "rootDir": "../../",
+    "outDir": "./dist",
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
@@ -40,7 +41,7 @@
     // Recommended Options
     "strict": true,
     "jsx": "react-jsx",
-    "verbatimModuleSyntax": true,
+    "verbatimModuleSyntax": false,
     "isolatedModules": true,
     // "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
@@ -49,5 +50,9 @@
   "include": [
     "src/**/*", // 일반적으로 소스 코드는 src 폴더에 위치합니다.
     "src/index.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "../../packages/shared/src/components" // 백엔드 빌드 시 UI 컴포넌트는 무시
   ]
 }
