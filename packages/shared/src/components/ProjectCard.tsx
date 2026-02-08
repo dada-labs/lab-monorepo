@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  ProjectItemResponse,
-  TechTagResponse,
-  VisibilityLabel,
-} from "../types";
+import { type ProjectItemResponse, VisibilityLabel } from "../types";
 import clsx from "clsx";
 import { Eye } from "../icons";
 import { formatYear } from "../utils";

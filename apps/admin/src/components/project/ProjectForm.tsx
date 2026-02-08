@@ -6,14 +6,13 @@ import {
   FormTextArea,
   SelectorProjectStatus,
   TagItem,
-  TagItemList,
   type ProjectResponse,
   type ProjectStatus,
   type TechTagResponse,
   type Visibility,
 } from "@shared";
 import { useEffect, useState } from "react";
-import { Image, Link as LinkIcon, UploadCloud, X } from "@shared/icons";
+import { Image, UploadCloud, X } from "@shared/icons";
 
 interface ProjectFormProps {
   initialData?: ProjectResponse;

@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import React, { ButtonHTMLAttributes } from "react";
+import type { ButtonHTMLAttributes } from "react";
 
 export type ButtonVariant =
   | "primary"

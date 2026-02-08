@@ -1,5 +1,5 @@
 import { Selector } from "./Selector";
-import { ProjectStatus, ProjectStatusLabel } from "../types";
+import { type ProjectStatus, ProjectStatusLabel } from "../types";
 import clsx from "clsx";
 
 export const PROJECT_STATUS_OPTIONS = Object.entries(ProjectStatusLabel).map(

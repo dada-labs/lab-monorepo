@@ -2,7 +2,6 @@ import {
   FolderCode,
   Users,
   MessageSquareLock,
-  MessageSquareQuote,
   type LucideIcon,
 } from "@shared/icons";
 export const NAVIGATION = {

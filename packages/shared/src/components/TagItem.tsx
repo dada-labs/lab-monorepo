@@ -1,4 +1,4 @@
-import { X, Download, Link as LinkIcon } from "../icons";
+import { X } from "../icons";
 import { Button } from "./Button";
 
 interface TagItemProps {

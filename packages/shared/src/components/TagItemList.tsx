@@ -1,4 +1,4 @@
-import { TechTagResponse } from "../types";
+import type { TechTagResponse } from "../types";
 import { TagItem } from "./TagItem";
 
 interface TagItemListProps {

@@ -4,14 +4,12 @@ import { getProjectById } from "@/lib/project";
 import {
   ArticleItem,
   FileItem,
-  formatDate,
   formatFullDate,
   LoadingArea,
   ProjectStatusLabel,
   TagItemList,
   UrlButton,
   type ProjectResponse,
-  type TechTagResponse,
 } from "@shared";
 import ManageDropdown from "@/components/ui/ManageDropdown";
 import NotFoundPage from "../NotFoundPage";

@@ -2,7 +2,6 @@ import { createProject } from "@/lib/project";
 import ProjectForm from "@/components/project/ProjectForm";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { flushSync } from "react-dom";
 
 export default function ProjectWritePage() {
   const navigate = useNavigate();
