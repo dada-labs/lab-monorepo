@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch src/index.ts",
     "start": "node dist/apps/api/src/index.js",
-    "build": "prisma generate && tsc && tsc-alias -p tsconfig.json",
+    "build": "prisma generate && tsc && tsc-alias -p tsconfig.json -v",
     "prisma": "prisma",
     "db:init": "prisma init",
     "db:generate": "prisma generate",

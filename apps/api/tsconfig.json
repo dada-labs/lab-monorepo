@@ -14,7 +14,8 @@
     "types": ["node"],
     "baseUrl": ".",
     "paths": {
-      "@shared": ["../../packages/shared/index.ts"]
+      "@shared": ["../../packages/shared/index.ts"],
+      "src/*": ["./src/*"]
     },
     // For nodejs:
     // "lib": ["esnext"],
