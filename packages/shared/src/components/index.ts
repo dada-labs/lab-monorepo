@@ -9,3 +9,4 @@ export * from "./Pagination";
 export * from "./NodataArea";
 export * from "./SearchBar";
 export * from "./UrlButton";
+export * from "./ArticleItem";

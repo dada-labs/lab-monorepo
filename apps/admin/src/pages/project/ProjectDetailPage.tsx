@@ -2,6 +2,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getProjectById } from "@/lib/project";
 import {
+  ArticleItem,
   formatDate,
   ProjectStatusLabel,
   UrlButton,
@@ -105,42 +106,31 @@ export default function ProjectDetailPage() {
           )}
           <div className="flex flex-col gap-8">
             {project.highlights && (
-              <dl className="flex flex-col gap-1">
-                <dt className="font-bold text-lg">주요 기능</dt>
-                <dd className="font-medium text-gray-600">
-                  {project.highlights}
-                </dd>
-              </dl>
+              <ArticleItem label="기능 및 성과">
+                {project.highlights}
+              </ArticleItem>
             )}
             {project.description && (
-              <dl className="flex flex-col gap-1">
-                <dt className="font-bold text-lg">상세 내용</dt>
-                <dd className="font-medium text-gray-600">
-                  {project.description}
-                </dd>
-              </dl>
+              <ArticleItem label="상세 내용">{project.description}</ArticleItem>
             )}
             {project.attachments && project.attachments.length > 0 && (
-              <dl className="flex flex-col gap-1">
-                <dt className="font-bold text-lg">첨부파일</dt>
-                <dd className="font-medium text-gray-600">
-                  <div className="flex flex-col gap-2">
-                    {project.attachments.map((item) => (
-                      <div
-                        key={item.file.id}
-                        className="flex items-center justify-between p-3 bg-primary-lightest rounded-lg border border-primary-light"
-                      >
-                        <div className="flex items-center gap-2 truncate">
-                          <LinkIcon size={16} className="text-primary" />
-                          <span className="text-sm text-gray-700 truncate">
-                            {item.file.fileName}
-                          </span>
-                        </div>
+              <ArticleItem label="첨부파일">
+                <div className="flex flex-col gap-2">
+                  {project.attachments.map((item) => (
+                    <div
+                      key={item.file.id}
+                      className="flex items-center justify-between p-3 bg-primary-lightest rounded-lg border border-primary-light"
+                    >
+                      <div className="flex items-center gap-2 truncate">
+                        <LinkIcon size={16} className="text-primary" />
+                        <span className="text-sm text-gray-700 truncate">
+                          {item.file.fileName}
+                        </span>
                       </div>
-                    ))}
-                  </div>
-                </dd>
-              </dl>
+                    </div>
+                  ))}
+                </div>
+              </ArticleItem>
             )}
           </div>
           {(project.liveUrl || project.githubUrl || project.relatedUrl) && (
