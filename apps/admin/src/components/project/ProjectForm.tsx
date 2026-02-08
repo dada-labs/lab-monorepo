@@ -5,6 +5,8 @@ import {
   FormInput,
   FormTextArea,
   SelectorProjectStatus,
+  TagItem,
+  TagItemList,
   type ProjectResponse,
   type ProjectStatus,
   type TechTagResponse,
@@ -303,22 +305,12 @@ export default function ProjectForm({
             }
             helper="스킬 태그는 최소 1개, 최대 10개까지 설정할 수 있습니다."
           />
-          <div className="flex flex-wrap gap-2 mb-2">
+          <div className="flex flex-wrap gap-2">
             {techs.map((tag) => (
-              <span
-                key={tag}
-                className="flex gap-1 items-center bg-primary-lightest border border-primary-light px-2 py-1 rounded"
-              >
-                <small className="break-keep">{tag}</small>
-                <Button
-                  size="sm"
-                  variant="none"
-                  className="!px-0"
-                  onClick={() => setTechs(techs.filter((t) => t !== tag))}
-                >
-                  <X size={16} />
-                </Button>
-              </span>
+              <TagItem
+                tagName={tag}
+                onDelete={() => setTechs(techs.filter((t) => t !== tag))}
+              />
             ))}
           </div>
         </div>

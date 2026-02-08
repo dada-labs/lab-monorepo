@@ -5,8 +5,10 @@ import {
   ArticleItem,
   FileItem,
   formatDate,
+  formatFullDate,
   LoadingArea,
   ProjectStatusLabel,
+  TagItemList,
   UrlButton,
   type ProjectResponse,
   type TechTagResponse,
@@ -54,16 +56,7 @@ export default function ProjectDetailPage() {
       <div className="p-8 max-w-3xl mx-auto flex flex-col gap-6">
         <div className="flex flex-col gap-4 pb-6 border-b border-gray-300">
           <div className="flex justify-between items-start">
-            <div className="flex flex-wrap gap-2">
-              {project.techs.map((t: TechTagResponse) => (
-                <div
-                  key={t.id}
-                  className="flex gap-1 items-center text-sm text-primary font-bold bg-primary-lightest border border-primary-light px-2 py-0.5 rounded"
-                >
-                  #{t.name}
-                </div>
-              ))}
-            </div>
+            <TagItemList techs={project.techs} />
           </div>
           <div className="flex flex-col gap-1">
             <h2 className="text-2xl font-bold">{project.title}</h2>
@@ -74,13 +67,13 @@ export default function ProjectDetailPage() {
               <dl className="flex gap-1 text-sm text-gray-600">
                 <dt className="">작업 기간</dt>
                 <dd className="font-medium">
-                  {formatDate(project.startedAt) || "-"}
-                  {project.endedAt && ` ~ ${formatDate(project.endedAt)}`}
+                  {formatFullDate(project.startedAt) || "-"}
+                  {project.endedAt && ` ~ ${formatFullDate(project.endedAt)}`}
                 </dd>
               </dl>
             )}
             <dl className="flex gap-1 text-sm text-gray-600">
-              <dt className="">프로젝트 상태</dt>
+              <dt className="">진행 상태</dt>
               <dd className="font-bold">
                 {ProjectStatusLabel[project.status]}
               </dd>

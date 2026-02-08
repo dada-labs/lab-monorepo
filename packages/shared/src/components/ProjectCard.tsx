@@ -7,6 +7,7 @@ import {
 import clsx from "clsx";
 import { Eye } from "../icons";
 import { formatYear } from "../utils";
+import { TagItemList } from "./TagItemList";
 
 interface ProjectCardProps {
   project: ProjectItemResponse;
@@ -51,18 +52,7 @@ export const ProjectCard = ({
                 {project.oneLine}
               </p>
             </div>
-            {project.techs.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {project.techs.map((t: TechTagResponse) => (
-                  <div
-                    key={t.id}
-                    className="flex gap-1 items-center text-sm text-primary font-bold bg-primary-lightest border border-primary-light px-2 py-0.5 rounded"
-                  >
-                    #{t.name}
-                  </div>
-                ))}
-              </div>
-            )}
+            {project.techs.length > 0 && <TagItemList techs={project.techs} />}
           </div>
 
           {/* 이미지 영역 */}

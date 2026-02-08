@@ -11,3 +11,5 @@ export * from "./SearchBar";
 export * from "./UrlButton";
 export * from "./ArticleItem";
 export * from "./FileItem";
+export * from "./TagItem";
+export * from "./TagItemList";
