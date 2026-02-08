@@ -69,13 +69,26 @@ export const projectRepository = {
     attachments?: FileBase[],
     tx?: Prisma.TransactionClient // 트랜잭션 클라이언트 주입 허용
   ) {
-    const { id: _id, thumbnailId, techs: _techs, ...updateData } = data;
+    const {
+      id: _id,
+      thumbnailId,
+      techs: _techs,
+      startedAt,
+      endedAt,
+      ...updateData
+    } = data;
     const client = tx || prisma;
 
     return await client.project.update({
       where: { id },
       data: {
         ...updateData,
+        ...(startedAt !== undefined && {
+          startedAt: startedAt ? new Date(startedAt) : null,
+        }),
+        ...(endedAt !== undefined && {
+          endedAt: endedAt ? new Date(endedAt) : null,
+        }),
         ...(techs && {
           techs: {
             set: [], // 기존 관계 끊기

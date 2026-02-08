@@ -1,9 +1,12 @@
 import {
   Button,
+  FileItem,
   formatDateForInput,
   FormInput,
   FormTextArea,
   SelectorProjectStatus,
+  TagItem,
+  TagItemList,
   type ProjectResponse,
   type ProjectStatus,
   type TechTagResponse,
@@ -133,6 +136,8 @@ export default function ProjectForm({
       data.append("liveUrl", formData.liveUrl);
       data.append("githubUrl", formData.githubUrl);
       data.append("relatedUrl", formData.relatedUrl);
+      data.append("startedAt", formData.startedAt);
+      data.append("endedAt", formData.endedAt);
       data.append("visibility", visibility);
       data.append("status", status);
 
@@ -300,22 +305,12 @@ export default function ProjectForm({
             }
             helper="스킬 태그는 최소 1개, 최대 10개까지 설정할 수 있습니다."
           />
-          <div className="flex flex-wrap gap-2 mb-2">
+          <div className="flex flex-wrap gap-2">
             {techs.map((tag) => (
-              <span
-                key={tag}
-                className="flex gap-1 items-center bg-primary-lightest border border-primary-light px-2 py-1 rounded"
-              >
-                <small className="break-keep">{tag}</small>
-                <Button
-                  size="sm"
-                  variant="none"
-                  className="!px-0"
-                  onClick={() => setTechs(techs.filter((t) => t !== tag))}
-                >
-                  <X size={16} />
-                </Button>
-              </span>
+              <TagItem
+                tagName={tag}
+                onDelete={() => setTechs(techs.filter((t) => t !== tag))}
+              />
             ))}
           </div>
         </div>
@@ -344,7 +339,7 @@ export default function ProjectForm({
           <FormInput
             type="url"
             value={formData.relatedUrl}
-            label="Github Url"
+            label="Related Url"
             placeholder="http://을 포함해서, 연관된 문서 주소(Url)를 입력해 주세요."
             onChange={(e) =>
               setFormData({ ...formData, relatedUrl: e.target.value })
@@ -385,26 +380,11 @@ export default function ProjectForm({
         {docs.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {docs.map((file, idx) => (
-              <div
+              <FileItem
                 key={idx}
-                className="flex items-center justify-between p-3 bg-primary-lightest rounded-lg border border-primary-light"
-              >
-                <div className="flex items-center gap-2 truncate">
-                  <LinkIcon size={16} className="text-primary" />
-                  <span className="text-sm text-gray-700 truncate">
-                    {file.name}
-                  </span>
-                </div>
-                <Button
-                  type="button"
-                  variant="none"
-                  size="sm"
-                  onClick={() => removeDoc(idx)}
-                  className="!w-auto !px-0 text-gray-400 hover:text-red-500"
-                >
-                  <X size={18} />
-                </Button>
-              </div>
+                fileName={file.name}
+                onDelete={() => removeDoc(idx)}
+              />
             ))}
           </div>
         )}
@@ -414,26 +394,15 @@ export default function ProjectForm({
             <div className="flex flex-col gap-2 mb-4">
               <p className="text-sm text-gray-700">기존 첨부파일</p>
               {initialData.attachments.map((item) => (
-                <div
+                <FileItem
                   key={item.file.id}
-                  className="flex items-center justify-between p-2 bg-primary-lightest border rounded-lg"
-                >
-                  <div className="flex items-center flex-1 gap-2 text-sm text-gray-600">
-                    <LinkIcon size={14} />
-                    {item.file.fileName}
-                  </div>
-                  <Button
-                    type="button"
-                    variant="none"
-                    size="sm"
-                    onClick={() => {
-                      /* 첨부파일 개별 삭제 API 호출 로직 */
-                    }}
-                    className="!w-auto hover:text-red-600"
-                  >
-                    <X size={16} />
-                  </Button>
-                </div>
+                  fileName={item.file.fileName}
+                  fileUrl={item.file.url}
+                  onDelete={() => {
+                    /** 삭제 로직 호출 */
+                    console.log("삭제 로직 호출");
+                  }}
+                />
               ))}
             </div>
           )}
