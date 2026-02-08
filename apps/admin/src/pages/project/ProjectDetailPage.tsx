@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 import { getProjectById } from "@/lib/project";
 import {
   ArticleItem,
+  FileItem,
   formatDate,
+  LoadingArea,
   ProjectStatusLabel,
   UrlButton,
   type ProjectResponse,
@@ -11,6 +13,7 @@ import {
 } from "@shared";
 import ManageDropdown from "@/components/ui/ManageDropdown";
 import { Link as LinkIcon } from "@shared/icons";
+import NotFoundPage from "../NotFoundPage";
 
 export default function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -56,8 +59,8 @@ export default function ProjectDetailPage() {
     fetchProject();
   }, [id, navigate]);
 
-  if (isLoading) return <div>로딩 중</div>;
-  if (!project) return <div>해당 페이지를 찾을 수 없습니다.</div>;
+  if (isLoading) return <LoadingArea />;
+  if (!project) return <NotFoundPage />;
 
   return (
     <>
@@ -117,17 +120,12 @@ export default function ProjectDetailPage() {
               <ArticleItem label="첨부파일">
                 <div className="flex flex-col gap-2">
                   {project.attachments.map((item) => (
-                    <div
+                    <FileItem
                       key={item.file.id}
-                      className="flex items-center justify-between p-3 bg-primary-lightest rounded-lg border border-primary-light"
-                    >
-                      <div className="flex items-center gap-2 truncate">
-                        <LinkIcon size={16} className="text-primary" />
-                        <span className="text-sm text-gray-700 truncate">
-                          {item.file.fileName}
-                        </span>
-                      </div>
-                    </div>
+                      fileName={item.file.fileName}
+                      fileUrl={item.file.url}
+                      isRead={true}
+                    />
                   ))}
                 </div>
               </ArticleItem>

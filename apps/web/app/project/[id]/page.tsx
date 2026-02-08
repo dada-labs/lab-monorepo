@@ -3,6 +3,7 @@
 import { getProjectById } from "@/lib/projects";
 import {
   ArticleItem,
+  FileItem,
   formatDate,
   LoadingArea,
   ProjectStatusLabel,
@@ -94,7 +95,9 @@ export default function ProjectDetailPage() {
           )}
           <div className="flex flex-col gap-8">
             {project.highlights && (
-              <ArticleItem label="주요 성과">{project.highlights}</ArticleItem>
+              <ArticleItem label="기능 및 성과">
+                {project.highlights}
+              </ArticleItem>
             )}
             {project.description && (
               <ArticleItem label="상세 내용">{project.description}</ArticleItem>
@@ -103,17 +106,12 @@ export default function ProjectDetailPage() {
               <ArticleItem label="첨부파일">
                 <div className="flex flex-col gap-2">
                   {project.attachments.map((item) => (
-                    <div
+                    <FileItem
                       key={item.file.id}
-                      className="flex items-center justify-between p-3 bg-primary-lightest rounded-lg border border-primary-light"
-                    >
-                      <div className="flex items-center gap-2 truncate">
-                        <LinkIcon size={16} className="text-primary" />
-                        <span className="text-sm text-gray-700 truncate">
-                          {item.file.fileName}
-                        </span>
-                      </div>
-                    </div>
+                      fileName={item.file.fileName}
+                      fileUrl={item.file.url}
+                      isRead={true}
+                    />
                   ))}
                 </div>
               </ArticleItem>

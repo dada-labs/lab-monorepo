@@ -1,5 +1,6 @@
 import {
   Button,
+  FileItem,
   formatDateForInput,
   FormInput,
   FormTextArea,
@@ -385,26 +386,11 @@ export default function ProjectForm({
         {docs.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {docs.map((file, idx) => (
-              <div
+              <FileItem
                 key={idx}
-                className="flex items-center justify-between p-3 bg-primary-lightest rounded-lg border border-primary-light"
-              >
-                <div className="flex items-center gap-2 truncate">
-                  <LinkIcon size={16} className="text-primary" />
-                  <span className="text-sm text-gray-700 truncate">
-                    {file.name}
-                  </span>
-                </div>
-                <Button
-                  type="button"
-                  variant="none"
-                  size="sm"
-                  onClick={() => removeDoc(idx)}
-                  className="!w-auto !px-0 text-gray-400 hover:text-red-500"
-                >
-                  <X size={18} />
-                </Button>
-              </div>
+                fileName={file.name}
+                onDelete={() => removeDoc(idx)}
+              />
             ))}
           </div>
         )}
@@ -414,26 +400,15 @@ export default function ProjectForm({
             <div className="flex flex-col gap-2 mb-4">
               <p className="text-sm text-gray-700">기존 첨부파일</p>
               {initialData.attachments.map((item) => (
-                <div
+                <FileItem
                   key={item.file.id}
-                  className="flex items-center justify-between p-2 bg-primary-lightest border rounded-lg"
-                >
-                  <div className="flex items-center flex-1 gap-2 text-sm text-gray-600">
-                    <LinkIcon size={14} />
-                    {item.file.fileName}
-                  </div>
-                  <Button
-                    type="button"
-                    variant="none"
-                    size="sm"
-                    onClick={() => {
-                      /* 첨부파일 개별 삭제 API 호출 로직 */
-                    }}
-                    className="!w-auto hover:text-red-600"
-                  >
-                    <X size={16} />
-                  </Button>
-                </div>
+                  fileName={item.file.fileName}
+                  fileUrl={item.file.url}
+                  onDelete={() => {
+                    /** 삭제 로직 호출 */
+                    console.log("삭제 로직 호출");
+                  }}
+                />
               ))}
             </div>
           )}

@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getProjectById, updateProject } from "@/lib/project";
 import ProjectForm from "@/components/project/ProjectForm";
-import type { ProjectResponse } from "@shared";
+import { LoadingArea, type ProjectResponse } from "@shared";
 
 export default function ProjectEditPage() {
   const { id } = useParams<{ id: string }>();
@@ -56,7 +56,7 @@ export default function ProjectEditPage() {
     }
   };
 
-  if (isLoading) return <div>로딩 중...</div>;
+  if (isLoading) return <LoadingArea />;
 
   return (
     <>
