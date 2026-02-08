@@ -134,6 +134,8 @@ export default function ProjectForm({
       data.append("liveUrl", formData.liveUrl);
       data.append("githubUrl", formData.githubUrl);
       data.append("relatedUrl", formData.relatedUrl);
+      data.append("startedAt", formData.startedAt);
+      data.append("endedAt", formData.endedAt);
       data.append("visibility", visibility);
       data.append("status", status);
 

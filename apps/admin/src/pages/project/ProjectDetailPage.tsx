@@ -5,6 +5,7 @@ import {
   ArticleItem,
   FileItem,
   formatDate,
+  formatFullDate,
   LoadingArea,
   ProjectStatusLabel,
   UrlButton,
@@ -12,7 +13,6 @@ import {
   type TechTagResponse,
 } from "@shared";
 import ManageDropdown from "@/components/ui/ManageDropdown";
-import { Link as LinkIcon } from "@shared/icons";
 import NotFoundPage from "../NotFoundPage";
 
 export default function ProjectDetailPage() {
@@ -88,8 +88,8 @@ export default function ProjectDetailPage() {
               <dl className="flex gap-1 text-sm text-gray-600">
                 <dt className="">작업 기간</dt>
                 <dd className="font-medium">
-                  {formatDate(project.startedAt) || "-"}
-                  {project.endedAt && ` ~ ${formatDate(project.endedAt)}`}
+                  {formatFullDate(project.startedAt) || "-"}
+                  {project.endedAt && ` ~ ${formatFullDate(project.endedAt)}`}
                 </dd>
               </dl>
             )}
