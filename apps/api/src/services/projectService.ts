@@ -234,7 +234,15 @@ export class ProjectService {
 
   async getProjectById(id: string) {
     const result = await projectRepository.getProjectDetail(id);
+    if (!result) throw new Error("프로젝트를 찾을 수 없습니다.");
 
+    return result;
+  }
+  async updateViewCount(id: string) {
+    const existingProject = await projectRepository.findById(id);
+    if (!existingProject) throw new Error("프로젝트를 찾을 수 없습니다.");
+
+    const result = await projectRepository.updateViewCount(id);
     return result;
   }
 }

@@ -143,20 +143,24 @@ export const projectRepository = {
     });
   },
 
-  // 프로젝트 상세보기, 조회수 증가
+  // 프로젝트 상세보기
   async getProjectDetail(id: string) {
-    return await prisma.project.update({
+    return await prisma.project.findUnique({
       where: { id },
-      data: {
-        viewCount: {
-          increment: 1,
-        },
-      },
       include: {
         thumbnail: true,
         techs: true,
         attachments: { include: { file: true } },
       },
+    });
+  },
+
+  // 조회수 증가
+  async updateViewCount(id: string) {
+    return await prisma.project.update({
+      where: { id },
+      data: { viewCount: { increment: 1 } },
+      select: { id: true },
     });
   },
 
