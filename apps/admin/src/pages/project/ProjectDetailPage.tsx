@@ -121,7 +121,7 @@ export default function ProjectDetailPage() {
             {project.description && (
               <ArticleItem label="상세 내용">
                 <div
-                  className="text-sm [&_p]:min-h-[1rem] [&_p]:mb-2 [&_h3]:mt-6 [&_h3]:text-base [&_h3]:font-bold [&_h3]:mb-2 leading-7"
+                  className="text-sm [&_p]:min-h-[1rem] [&_p]:mb-1 [&_h3]:mt-4 [&_h3]:text-base [&_h3]:font-bold [&_h3]:mb-1 leading-7"
                   dangerouslySetInnerHTML={{ __html: project.description }}
                 />
               </ArticleItem>

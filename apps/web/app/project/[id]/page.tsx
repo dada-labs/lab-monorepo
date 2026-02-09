@@ -1,171 +1,39 @@
-"use client";
+import { Metadata } from "next";
+import { getProjectById } from "@/lib/projects";
+import ProjectDetailView from "./ProjectDetailView"; // 2번에서 만들 파일
+import { notFound } from "next/navigation";
 
-import { getProjectById, updateProjectViewCount } from "@/lib/projects";
-import {
-  ArticleItem,
-  FileItem,
-  formatDateRange,
-  LoadingArea,
-  ProjectStatusConfig,
-  TagItemList,
-  UrlButton,
-  type ProjectApiResponse,
-} from "@shared";
-import { notFound, useParams } from "next/navigation";
-import { useEffect, useRef } from "react";
-import Link from "next/link";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+interface Props {
+  params: Promise<{ id: string }>;
+}
 
-export default function ProjectDetailPage() {
-  const params = useParams();
-  const projectId = params?.id as string;
-  const queryClient = useQueryClient();
+// [SEO] 동적 메타데이터
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const resolvedParams = await params;
+  const response = await getProjectById(resolvedParams.id);
+  const project = response?.data;
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["project", projectId],
-    queryFn: () => getProjectById(projectId),
-    enabled: !!projectId,
-    staleTime: 1000 * 60 * 5,
-  });
+  if (!project) return { title: "프로젝트를 찾을 수 없습니다 | Dada Lab" };
 
-  const project = data?.data;
+  const baseUrl = process.env.NEXT_PUBLIC_URL;
 
-  const { mutate: addViewCount } = useMutation({
-    mutationFn: () => updateProjectViewCount(projectId as string),
-    onSuccess: () => {
-      queryClient.setQueryData(
-        ["project", projectId],
-        (prev: ProjectApiResponse) => {
-          if (!prev || !prev.data) return prev;
-          return {
-            ...prev,
-            data: {
-              ...prev.data,
-              viewCount: prev.data.viewCount + 1,
-            },
-          };
-        }
-      );
-
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
+  return {
+    metadataBase: new URL("https://lab-monorepo-web.vercel.app"),
+    title: project.title,
+    description: project.oneLine,
+    openGraph: {
+      title: `${project.title} | Dada Lab`,
+      description: project.oneLine,
+      images: [project.thumbnail?.url || "/images/og-image.png"],
+      url: `/project/${resolvedParams.id}`,
     },
-  });
+  };
+}
 
-  const isMounted = useRef(false);
+export default async function ProjectDetailPage({ params }: Props) {
+  const resolvedParams = await params;
+  const response = await getProjectById(resolvedParams.id);
+  if (!response?.data) notFound();
 
-  useEffect(() => {
-    if (!isMounted.current && projectId) {
-      addViewCount();
-      isMounted.current = true;
-    }
-
-    return () => {
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
-    };
-  }, [projectId, addViewCount, queryClient]);
-
-  if (isLoading) return <LoadingArea />;
-  if (isError || !project) {
-    notFound();
-  }
-  const statusConfig = ProjectStatusConfig[project.status];
-
-  return (
-    <>
-      <div className="p-8 max-w-3xl mx-auto flex flex-col gap-6">
-        <div className="flex flex-col gap-4 pb-6 border-b border-gray-300">
-          <div className="flex justify-between items-start">
-            <TagItemList techs={project.techs} />
-          </div>
-          <div className="flex flex-col gap-1">
-            <h2 className="text-2xl font-bold">{project.title}</h2>
-            <p className="text-sm text-gray-600">{project.oneLine}</p>
-          </div>
-          <div className="flex justify-between">
-            <dl className="flex gap-1 text-sm text-gray-600">
-              <dt className="sr-only">진행 상태</dt>
-              <dd className="font-bold flex gap-1 items-center">
-                <span style={{ color: statusConfig.color }}>●</span>
-                {ProjectStatusConfig[project.status].label}
-              </dd>
-            </dl>
-            <dl className="flex gap-1 text-sm text-gray-600">
-              <dt className="sr-only">작업 기간</dt>
-              <dd className="font-medium">
-                {formatDateRange(project.startedAt, project.endedAt)}
-              </dd>
-            </dl>
-          </div>
-        </div>
-        <div className="flex flex-col gap-10">
-          {project.thumbnail && (
-            <div className="">
-              <img src={project.thumbnail.url} alt={project.title} />
-            </div>
-          )}
-          <div className="flex flex-col gap-8">
-            {project.highlights && (
-              <ArticleItem label="기능 및 성과">
-                {project.highlights}
-              </ArticleItem>
-            )}
-            {project.description && (
-              <ArticleItem label="상세 내용">
-                <div
-                  className="text-sm [&_p]:min-h-[1rem] [&_p]:mb-2 [&_h3]:mt-6 [&_h3]:text-base [&_h3]:font-bold [&_h3]:mb-2 leading-7"
-                  dangerouslySetInnerHTML={{ __html: project.description }}
-                />
-              </ArticleItem>
-            )}
-            {project.attachments && project.attachments.length > 0 && (
-              <ArticleItem label="첨부파일">
-                <div className="flex flex-col gap-2">
-                  {project.attachments.map((item) => (
-                    <FileItem
-                      key={item.file.id}
-                      fileName={item.file.fileName}
-                      fileUrl={item.file.url}
-                      isRead={true}
-                    />
-                  ))}
-                </div>
-              </ArticleItem>
-            )}
-          </div>
-          {(project.liveUrl || project.githubUrl || project.relatedUrl) && (
-            <div className="pt-10 border-t border-gray-300 flex flex-col items-center gap-6">
-              <div className="flex justify-center gap-4">
-                {project.liveUrl && (
-                  <UrlButton
-                    url={project.liveUrl}
-                    urlType="LIVE"
-                    theme="gray"
-                    LinkComponent={Link}
-                  />
-                )}
-                {project.githubUrl && (
-                  <UrlButton
-                    url={project.githubUrl}
-                    urlType="GITHUB"
-                    LinkComponent={Link}
-                  />
-                )}
-                {project.relatedUrl && (
-                  <UrlButton
-                    url={project.relatedUrl}
-                    urlType="RELATED"
-                    theme="gray"
-                    LinkComponent={Link}
-                  />
-                )}
-              </div>
-              <p className="text-gray-600 text-sm">
-                프로젝트 관련 외부 링크를 통해, 더 자세한 내용을 확인하세요 :)
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-    </>
-  );
+  return <ProjectDetailView />;
 }

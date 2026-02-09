@@ -16,9 +16,30 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const baseUrl = process.env.NEXT_PUBLIC_URL;
+
 export const metadata: Metadata = {
-  title: "Dada Lab | 개발·프로젝트 아카이빙",
-  description: "다다랩은 개발 관련 문서 및 프로젝트를 기록합니다.",
+  title: {
+    default: "Dada Lab | 개발·프로젝트 아카이빙",
+    template: "%s | Dada Lab",
+  },
+  description:
+    "다다랩에서 진행한 다양한 개발 프로젝트와 기술로그를 기록하고 있습니다.",
+  openGraph: {
+    title: "Dada Lab",
+    description: "개발 프로젝트 아카이빙",
+    url: baseUrl,
+    siteName: "Dada Lab",
+    images: [
+      {
+        url: "/images/og-image.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: "ko_KR",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
