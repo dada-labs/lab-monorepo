@@ -1,30 +1,37 @@
 import { createProject } from "@/lib/project";
 import ProjectForm from "@/components/project/ProjectForm";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function ProjectWritePage() {
   const navigate = useNavigate();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const queryClient = useQueryClient();
 
-  const handleSubmit = async (data: FormData) => {
-    setIsSubmitting(true);
-    try {
-      const response = await createProject(data);
+  const mutation = useMutation({
+    mutationFn: (data: FormData) => createProject(data),
+    onSuccess: (response, data) => {
       if (response.success) {
-        console.log(`${data} 상태로 서버 전송 완료!`, data);
+        queryClient.invalidateQueries({ queryKey: ["projects"] });
+
+        const visibility = data.get("visibility");
         alert(
-          data.get("visibility") === "PUBLIC"
+          visibility === "PUBLIC"
             ? "프로젝트가 등록되었습니다."
             : "임시저장 되었습니다."
         );
+
         navigate("/project");
       }
-    } catch (err) {
+    },
+    onError: (err) => {
       console.error("저장 실패:", err);
-    } finally {
-      setIsSubmitting(false);
-    }
+      alert("프로젝트 등록 중 오류가 발생했습니다.");
+    },
+  });
+
+  // 제출 핸들러
+  const handleSubmit = async (data: FormData) => {
+    mutation.mutate(data);
   };
   return (
     <>
@@ -38,7 +45,7 @@ export default function ProjectWritePage() {
         <ProjectForm
           mode="CREATE"
           onSubmit={handleSubmit}
-          isSubmitting={isSubmitting}
+          isSubmitting={mutation.isPending}
         />
       </div>
     </>
