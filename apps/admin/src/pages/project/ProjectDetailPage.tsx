@@ -119,7 +119,12 @@ export default function ProjectDetailPage() {
               </ArticleItem>
             )}
             {project.description && (
-              <ArticleItem label="상세 내용">{project.description}</ArticleItem>
+              <ArticleItem label="상세 내용">
+                <div
+                  className="text-sm [&_p]:min-h-[1rem] [&_p]:mb-2 [&_h3]:mt-6 [&_h3]:text-base [&_h3]:font-bold [&_h3]:mb-2 leading-7"
+                  dangerouslySetInnerHTML={{ __html: project.description }}
+                />
+              </ArticleItem>
             )}
             {project.attachments && project.attachments.length > 0 && (
               <ArticleItem label="첨부파일">
