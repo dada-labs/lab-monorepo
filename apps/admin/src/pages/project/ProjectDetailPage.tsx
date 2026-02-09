@@ -1,6 +1,6 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { getProjectById } from "@/lib/project";
+import { useEffect, useRef } from "react";
+import { getProjectById, updateProjectViewCount } from "@/lib/project";
 import {
   ArticleItem,
   FileItem,
@@ -9,16 +9,30 @@ import {
   ProjectStatusLabel,
   TagItemList,
   UrlButton,
-  type ProjectResponse,
 } from "@shared";
 import ManageDropdown from "@/components/ui/ManageDropdown";
 import NotFoundPage from "../NotFoundPage";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
-  const [project, setProject] = useState<ProjectResponse | null>(null);
+  const queryClient = useQueryClient();
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["project", id],
+    queryFn: () => getProjectById(id!), // id가 있을 때만 실행됨
+    enabled: !!id, // id가 없으면 쿼리를 실행하지 않음
+  });
+
+  const project = data?.data;
+
+  const { mutate: addViewCount } = useMutation({
+    mutationFn: () => updateProjectViewCount(id!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["project", id] });
+    },
+  });
 
   const handleEdit = () => {
     if (!project) return;
@@ -33,33 +47,20 @@ export default function ProjectDetailPage() {
     // 예: axios.delete(`/api/posts/${post.id}`)
   };
 
-  const fetchProject = async () => {
-    if (!id) return;
-
-    try {
-      const response = await getProjectById(id);
-      if (response.success && response.data) {
-        setProject(response.data);
-      } else {
-        throw new Error(
-          response.message || "프로젝트 정보를 찾을 수 없습니다."
-        );
-      }
-    } catch (err) {
-      console.error(err);
-      alert("데이터를 불러오는데 실패했습니다.");
-      navigate("/project");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+  const isMounted = useRef(false);
   useEffect(() => {
-    fetchProject();
-  }, [id, navigate]);
+    if (!isMounted.current && id) {
+      addViewCount();
+      isMounted.current = true;
+    }
+
+    return () => {
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+    };
+  }, [id, addViewCount, queryClient]);
 
   if (isLoading) return <LoadingArea />;
-  if (!project) return <NotFoundPage />;
+  if (isError || !project) return <NotFoundPage />;
 
   return (
     <>

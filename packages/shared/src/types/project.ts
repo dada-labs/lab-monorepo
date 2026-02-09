@@ -127,3 +127,11 @@ export interface GetProjectListParams {
   status?: string;
   page?: number;
 }
+
+export interface ProjectViewCountApiResponse {
+  success: boolean;
+  data: {
+    id: string;
+  };
+  message?: string;
+}

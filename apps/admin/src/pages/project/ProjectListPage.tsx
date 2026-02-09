@@ -5,13 +5,10 @@ import {
   Pagination,
   ProjectCard,
   SelectorProjectStatus,
-  type MetaData,
-  type ProjectItemResponse,
   type ProjectStatus,
 } from "@shared";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
-import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
 export default function ProjectListPage() {
