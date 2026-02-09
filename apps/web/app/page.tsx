@@ -1,13 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  Button,
-  LoadingArea,
-  NodataArea,
-  ProjectCard,
-  type ProjectItemResponse,
-} from "@shared";
+import { Button, LoadingArea, NodataArea, ProjectCard } from "@shared";
 import Image from "next/image";
 import Link from "next/link";
 import { getRecentProjectList } from "@/lib/projects";
@@ -18,7 +11,7 @@ export default function HomePage() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["projects", "recent"],
     queryFn: getRecentProjectList,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60,
   });
 
   const projectList = data?.data?.projects || [];

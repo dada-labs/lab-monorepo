@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import {
   LoadingArea,
   NodataArea,
@@ -9,8 +8,6 @@ import {
   ProjectCard,
   ProjectStatus,
   SelectorProjectStatus,
-  type MetaData,
-  type ProjectItemResponse,
 } from "@shared";
 import Link from "next/link";
 import Image from "next/image";
