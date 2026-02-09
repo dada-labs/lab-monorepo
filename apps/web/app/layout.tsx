@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Suspense } from "react";
@@ -42,6 +42,14 @@ export const metadata: Metadata = {
   },
 };
 
+// 최소 해상도, 1280px 정도로 고정
+export const viewport: Viewport = {
+  width: 1280,
+  initialScale: 1,
+  // 사용자가 임의로 확대/축소하는 것을 허용할지 여부 (선택)
+  userScalable: true,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -53,7 +61,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <QueryProvider>
-          <div className="flex flex-col min-h-screen">
+          <div className="flex flex-col min-w-7xl min-h-screen">
             <Suspense fallback={<header className="h-16" />}>
               <LayoutHeader />
             </Suspense>
