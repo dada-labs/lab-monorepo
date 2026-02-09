@@ -9,6 +9,9 @@ import {
   ProjectStatusLabel,
   TagItemList,
   UrlButton,
+  type ProjectApiResponse,
+  type ProjectItemResponse,
+  type ProjectResponse,
 } from "@shared";
 import ManageDropdown from "@/components/ui/ManageDropdown";
 import NotFoundPage from "../NotFoundPage";
@@ -30,7 +33,19 @@ export default function ProjectDetailPage() {
   const { mutate: addViewCount } = useMutation({
     mutationFn: () => updateProjectViewCount(id!),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["project", id] });
+      queryClient.setQueryData(
+        ["project", id],
+        (prevData: ProjectApiResponse) => {
+          if (!prevData || !prevData.data) return prevData;
+          return {
+            ...prevData,
+            data: {
+              ...prevData.data,
+              viewCount: prevData.data.viewCount + 1,
+            },
+          };
+        }
+      );
     },
   });
 
@@ -48,6 +63,7 @@ export default function ProjectDetailPage() {
   };
 
   const isMounted = useRef(false);
+
   useEffect(() => {
     if (!isMounted.current && id) {
       addViewCount();
