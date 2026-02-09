@@ -10,8 +10,6 @@ import {
   TagItemList,
   UrlButton,
   type ProjectApiResponse,
-  type ProjectItemResponse,
-  type ProjectResponse,
 } from "@shared";
 import ManageDropdown from "@/components/ui/ManageDropdown";
 import NotFoundPage from "../NotFoundPage";
