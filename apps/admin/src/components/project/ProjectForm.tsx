@@ -11,8 +11,9 @@ import {
   type TechTagResponse,
   type Visibility,
 } from "@shared";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Image, UploadCloud, X } from "@shared/icons";
+import QuillEditor from "../ui/QuillEditor";
 
 interface ProjectFormProps {
   initialData?: ProjectResponse;
@@ -279,15 +280,19 @@ export default function ProjectForm({
             }
             rows={3}
           />
-          <FormTextArea
-            label="상세 설명"
-            placeholder="프로젝트 전반에 대한 상세한 설명을 입력해 주세요."
-            value={formData.description}
-            onChange={(e) =>
-              setFormData({ ...formData, description: e.target.value })
-            }
-            rows={6}
-          />
+
+          <Suspense
+            fallback={<div className="h-[300px] bg-gray-100 animate-pulse" />}
+          >
+            <QuillEditor
+              label="상세 설명"
+              value={formData.description}
+              onChange={(content: string) =>
+                setFormData({ ...formData, description: content })
+              }
+              placeholder="프로젝트 전반에 대한 상세한 설명을 입력해 주세요."
+            />
+          </Suspense>
         </div>
       </div>
       <div className="flex flex-col gap-2">
