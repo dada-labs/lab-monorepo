@@ -208,6 +208,7 @@ export const projectRepository = {
       where: {
         visibility: Visibility.PUBLIC,
       },
+      orderBy: { createdAt: "desc" },
       include: {
         thumbnail: true,
         techs: true,

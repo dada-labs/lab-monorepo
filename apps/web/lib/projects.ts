@@ -47,7 +47,7 @@ export const getPublicProjectList = async ({
 export const getRecentProjectList = async () => {
   try {
     const response = await api.get<ProjectListApiResponse>(
-      "/api/projects/public"
+      "/api/projects/recent"
     );
 
     return response.data;
@@ -60,7 +60,8 @@ export const getRecentProjectList = async () => {
         success: false,
         data: null,
         message:
-          serverMessage || "프로젝트 목록을 불러오는 중 오류가 발생했습니다.",
+          serverMessage ||
+          "프로젝트 최신 목록을 불러오는 중 오류가 발생했습니다.",
       };
     }
     return {

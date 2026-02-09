@@ -16,20 +16,35 @@ import Link from "next/link";
 import Image from "next/image";
 import { getPublicProjectList } from "@/lib/projects";
 import clsx from "clsx";
+import { useQuery } from "@tanstack/react-query";
 
 export default function ProjectListContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [projectList, setProjectList] = useState<ProjectItemResponse[] | null>(
-    null
-  );
-  const [metaData, setMetaData] = useState<MetaData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
   const currentKeyword = searchParams.get("keyword") || "";
   const currentStatus = searchParams.get("status") || "all";
   const currentPage = Number(searchParams.get("page")) || 1;
+
+  // 리액트 쿼리 적용
+  const { data, isLoading, isError } = useQuery({
+    queryKey: [
+      "projects",
+      "public",
+      { currentKeyword, currentStatus, currentPage },
+    ],
+    queryFn: () =>
+      getPublicProjectList({
+        keyword: currentKeyword,
+        status: currentStatus === "all" ? "" : currentStatus,
+        page: currentPage,
+      }),
+    staleTime: 1000 * 60,
+  });
+
+  const projectList = data?.data?.projects || [];
+  const metaData = data?.data?.meta;
 
   const updateParams = (updates: Record<string, string | number>) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -47,29 +62,6 @@ export default function ProjectListContent() {
 
     router.push(`${pathname}?${params.toString()}`);
   };
-
-  useEffect(() => {
-    const fetchProject = async () => {
-      setIsLoading(true);
-      try {
-        const response = await getPublicProjectList({
-          keyword: currentKeyword,
-          status: currentStatus === "all" ? "" : currentStatus,
-          page: currentPage,
-        });
-        if (response.success && response.data) {
-          setProjectList(response.data.projects);
-          setMetaData(response.data.meta);
-        }
-      } catch (err) {
-        console.error(err);
-        alert("데이터를 불러오는데 실패했습니다.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchProject();
-  }, [currentKeyword, currentStatus, currentPage]);
 
   if (isLoading) return <LoadingArea />;
 
@@ -106,7 +98,11 @@ export default function ProjectListContent() {
             />
           ))
         ) : (
-          <NodataArea />
+          <NodataArea
+            content={
+              isError ? "데이터를 불러오는 중 오류가 발생했습니다." : undefined
+            }
+          />
         )}
       </div>
       {metaData && metaData.totalPages > 1 && (
