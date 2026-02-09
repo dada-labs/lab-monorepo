@@ -1,5 +1,9 @@
 import React from "react";
-import { type ProjectItemResponse, VisibilityLabel } from "../types";
+import {
+  type ProjectItemResponse,
+  ProjectStatusConfig,
+  VisibilityLabel,
+} from "../types";
 import clsx from "clsx";
 import { Eye } from "../icons";
 import { formatYear } from "../utils";
@@ -16,6 +20,7 @@ export const ProjectCard = ({
   ImageComponent = "img", // 일반 img 태그
   LinkComponent = "a", // 일반 a 태그
 }: ProjectCardProps) => {
+  const statusConfig = ProjectStatusConfig[project.status];
   return (
     <div className="flex flex-col gap-1 h-full">
       <div className="flex justify-between text-sm">
@@ -30,9 +35,9 @@ export const ProjectCard = ({
       </div>
       <div
         className={clsx(
-          "flex-1 flex flex-col overflow-hidden rounded-lg border border-gray-300 transition-hover hover:shadow-xl",
-          !project.thumbnail ? "bg-primary-lightest" : "bg-white"
+          "flex-1 flex flex-col overflow-hidden rounded-lg border border-gray-300 border-t-[8px] transition-hover hover:shadow-xl"
         )}
+        style={{ borderTopColor: statusConfig.color }}
       >
         <LinkComponent
           href={`/project/${project.id}`}

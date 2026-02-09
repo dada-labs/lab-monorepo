@@ -4,9 +4,9 @@ import { getProjectById, updateProjectViewCount } from "@/lib/project";
 import {
   ArticleItem,
   FileItem,
-  formatFullDate,
+  formatDateRange,
   LoadingArea,
-  ProjectStatusLabel,
+  ProjectStatusConfig,
   TagItemList,
   UrlButton,
   type ProjectApiResponse,
@@ -76,6 +76,8 @@ export default function ProjectDetailPage() {
   if (isLoading) return <LoadingArea />;
   if (isError || !project) return <NotFoundPage />;
 
+  const statusConfig = ProjectStatusConfig[project.status];
+
   return (
     <>
       <div className="p-8 max-w-3xl mx-auto flex flex-col gap-6">
@@ -89,19 +91,17 @@ export default function ProjectDetailPage() {
             <p className="text-sm text-gray-600">{project.oneLine}</p>
           </div>
           <div className="flex justify-between">
-            {project.startedAt && (
-              <dl className="flex gap-1 text-sm text-gray-600">
-                <dt className="">작업 기간</dt>
-                <dd className="font-medium">
-                  {formatFullDate(project.startedAt) || "-"}
-                  {project.endedAt && ` ~ ${formatFullDate(project.endedAt)}`}
-                </dd>
-              </dl>
-            )}
             <dl className="flex gap-1 text-sm text-gray-600">
-              <dt className="">프로젝트 상태</dt>
-              <dd className="font-bold">
-                {ProjectStatusLabel[project.status]}
+              <dt className="sr-only">진행 상태</dt>
+              <dd className="font-bold flex gap-1 items-center">
+                <span style={{ color: statusConfig.color }}>●</span>
+                {ProjectStatusConfig[project.status].label}
+              </dd>
+            </dl>
+            <dl className="flex gap-1 text-sm text-gray-600">
+              <dt className="sr-only">작업 기간</dt>
+              <dd className="font-medium">
+                {formatDateRange(project.startedAt, project.endedAt)}
               </dd>
             </dl>
           </div>

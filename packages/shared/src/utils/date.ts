@@ -38,3 +38,17 @@ export const formatFullDate = (date: Date | string | undefined) => {
 
   return `${year}.${month}.${day}`;
 };
+
+export const formatDateRange = (
+  startedAt?: string | Date | null,
+  endedAt?: string | Date | null
+): string => {
+  if (!startedAt && !endedAt) {
+    return "프로젝트 작업 기간 확인 필요";
+  }
+
+  const startDate = startedAt ? formatFullDate(startedAt) : "-";
+  const endDate = endedAt ? formatFullDate(endedAt) : "진행 중";
+
+  return `${startDate} ~ ${endDate}`;
+};

@@ -1,11 +1,11 @@
 import { Selector } from "./Selector";
-import { type ProjectStatus, ProjectStatusLabel } from "../types";
+import { type ProjectStatus, ProjectStatusConfig } from "../types";
 import clsx from "clsx";
 
-export const PROJECT_STATUS_OPTIONS = Object.entries(ProjectStatusLabel).map(
+export const PROJECT_STATUS_OPTIONS = Object.entries(ProjectStatusConfig).map(
   ([value, config]) => ({
     value: value as ProjectStatus,
-    label: config,
+    label: config.label,
   })
 );
 
