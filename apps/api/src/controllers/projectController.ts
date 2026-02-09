@@ -138,3 +138,29 @@ export const getProject = async (req: Request, res: Response) => {
     });
   }
 };
+
+// 프로젝트 상세보기
+export const updateProjectViewCount = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "프로젝트 아이디가 필수입니다.",
+      });
+    }
+    const result = await projectService.updateViewCount(id as string);
+
+    return res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    console.error("ProjectViewCount Error:", error);
+    return res.status(400).json({
+      success: false,
+      message: "프로젝트 상세보기 중 오류가 발생했습니다.",
+    });
+  }
+};

@@ -112,3 +112,7 @@ Content-Type: application/json
 ### 프로젝트 상세보기
 GET http://localhost:4000/api/projects/cml5tts4p0001uc4c5qpnawzq
 Content-Type: application/json
+
+### 프로젝트 상세보기
+PATCH http://localhost:4000/api/projects/cml5tts4p0001uc4c5qpnawzq/viewcount
+Content-Type: application/json

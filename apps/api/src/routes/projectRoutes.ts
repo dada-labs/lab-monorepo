@@ -6,6 +6,7 @@ import {
   getPublicProjects,
   getRecentProjects,
   getProject,
+  updateProjectViewCount,
 } from "../controllers/projectController.js";
 import { authenticateToken } from "../middlewares/authMiddleware.js";
 import { upload } from "src/middlewares/uploadMiddleware.js";
@@ -37,5 +38,6 @@ router.get("/", getProjects);
 router.get("/public", getPublicProjects);
 router.get("/recent", getRecentProjects);
 router.get("/:id", getProject);
+router.patch("/:id/viewcount", updateProjectViewCount);
 
 export default router;

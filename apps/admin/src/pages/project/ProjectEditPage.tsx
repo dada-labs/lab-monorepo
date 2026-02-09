@@ -1,59 +1,49 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 import { getProjectById, updateProject } from "@/lib/project";
 import ProjectForm from "@/components/project/ProjectForm";
-import { LoadingArea, type ProjectResponse } from "@shared";
+import { LoadingArea } from "@shared";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function ProjectEditPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
-  const [project, setProject] = useState<ProjectResponse | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const fetchProject = async () => {
-      if (!id) return;
-
-      try {
-        const response = await getProjectById(id);
-        if (response.success && response.data) {
-          setProject(response.data);
-        } else {
-          throw new Error(
-            response.message || "프로젝트 정보를 찾을 수 없습니다."
-          );
-        }
-      } catch (err) {
-        console.error(err);
+  const { data, isLoading } = useQuery({
+    queryKey: ["project", id],
+    queryFn: () => getProjectById(id!),
+    enabled: !!id,
+    meta: {
+      onError: () => {
         alert("데이터를 불러오는데 실패했습니다.");
         navigate("/project");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchProject();
-  }, [id, navigate]);
+      },
+    },
+  });
 
-  // 3. 수정 핸들러 (updateProject API 호출)
-  const handleSubmit = async (data: FormData) => {
-    setIsSubmitting(true);
-    try {
-      console.log("수정 요청 시작..."); // 디버깅용
-      const response = await updateProject(id!, data);
+  const project = data?.data;
 
-      console.log("API 응답 결과:", response);
+  const mutation = useMutation({
+    mutationFn: (formData: FormData) => updateProject(id!, formData),
+    onSuccess: (response) => {
       if (response.success && response.data) {
-        alert(response.message);
+        alert(response.message || "수정되었습니다.");
+
+        queryClient.invalidateQueries({ queryKey: ["project", id] });
+        queryClient.invalidateQueries({ queryKey: ["projects"] });
+
         navigate(`/project/${response.data.id}`);
       }
-    } catch (err: any) {
-      console.error("수정 실패 상세:", err.response?.data || err.message);
+    },
+    onError: (err: any) => {
       alert(`수정 중 오류가 발생했습니다: ${err.message}`);
       console.error("수정 실패:", err);
-    } finally {
-      setIsSubmitting(false);
-    }
+    },
+  });
+
+  // 수정 핸들러
+  const handleSubmit = async (formData: FormData) => {
+    mutation.mutate(formData);
   };
 
   if (isLoading) return <LoadingArea />;
@@ -72,7 +62,7 @@ export default function ProjectEditPage() {
             mode="EDIT"
             initialData={project}
             onSubmit={handleSubmit}
-            isSubmitting={isSubmitting}
+            isSubmitting={mutation.isPending}
           />
         )}
       </div>
