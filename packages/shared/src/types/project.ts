@@ -6,12 +6,30 @@ export type ProjectStatus =
   | "HOLD";
 export type Visibility = "PUBLIC" | "PRIVATE" | "DRAFT";
 
-export const ProjectStatusLabel: Record<ProjectStatus, string> = {
-  PLANNING: "기획 중",
-  IN_PROGRESS: "진행 중",
-  MAINTENANCE: "유지보수",
-  COMPLETED: "완료",
-  HOLD: "중단",
+export const ProjectStatusConfig: Record<
+  ProjectStatus,
+  { label: string; color: string }
+> = {
+  PLANNING: {
+    label: "기획 중",
+    color: "#aaacae",
+  },
+  IN_PROGRESS: {
+    label: "진행 중",
+    color: "#ffbf38",
+  },
+  MAINTENANCE: {
+    label: "유지보수",
+    color: "#10b233",
+  },
+  COMPLETED: {
+    label: "완료",
+    color: "#4996ff",
+  },
+  HOLD: {
+    label: "중단",
+    color: "#e14141",
+  },
 };
 
 export const VisibilityLabel: Record<Visibility, string> = {

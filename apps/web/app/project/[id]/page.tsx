@@ -4,9 +4,9 @@ import { getProjectById, updateProjectViewCount } from "@/lib/projects";
 import {
   ArticleItem,
   FileItem,
-  formatFullDate,
+  formatDateRange,
   LoadingArea,
-  ProjectStatusLabel,
+  ProjectStatusConfig,
   TagItemList,
   UrlButton,
   type ProjectApiResponse,
@@ -68,6 +68,8 @@ export default function ProjectDetailPage() {
   if (isError || !project) {
     notFound();
   }
+  const statusConfig = ProjectStatusConfig[project.status];
+
   return (
     <>
       <div className="p-8 max-w-3xl mx-auto flex flex-col gap-6">
@@ -80,19 +82,17 @@ export default function ProjectDetailPage() {
             <p className="text-sm text-gray-600">{project.oneLine}</p>
           </div>
           <div className="flex justify-between">
-            {project.startedAt && (
-              <dl className="flex gap-1 text-sm text-gray-600">
-                <dt className="">작업 기간</dt>
-                <dd className="font-medium">
-                  {formatFullDate(project.startedAt) || "-"}
-                  {project.endedAt && ` ~ ${formatFullDate(project.endedAt)}`}
-                </dd>
-              </dl>
-            )}
             <dl className="flex gap-1 text-sm text-gray-600">
-              <dt className="">진행 상태</dt>
-              <dd className="font-bold">
-                {ProjectStatusLabel[project.status]}
+              <dt className="sr-only">진행 상태</dt>
+              <dd className="font-bold flex gap-1 items-center">
+                <span style={{ color: statusConfig.color }}>●</span>
+                {ProjectStatusConfig[project.status].label}
+              </dd>
+            </dl>
+            <dl className="flex gap-1 text-sm text-gray-600">
+              <dt className="sr-only">작업 기간</dt>
+              <dd className="font-medium">
+                {formatDateRange(project.startedAt, project.endedAt)}
               </dd>
             </dl>
           </div>
@@ -128,30 +128,35 @@ export default function ProjectDetailPage() {
             )}
           </div>
           {(project.liveUrl || project.githubUrl || project.relatedUrl) && (
-            <div className="pt-10 border-t border-gray-300 flex justify-center gap-4">
-              {project.liveUrl && (
-                <UrlButton
-                  url={project.liveUrl}
-                  urlType="LIVE"
-                  theme="gray"
-                  LinkComponent={Link}
-                />
-              )}
-              {project.githubUrl && (
-                <UrlButton
-                  url={project.githubUrl}
-                  urlType="GITHUB"
-                  LinkComponent={Link}
-                />
-              )}
-              {project.relatedUrl && (
-                <UrlButton
-                  url={project.relatedUrl}
-                  urlType="RELATED"
-                  theme="gray"
-                  LinkComponent={Link}
-                />
-              )}
+            <div className="pt-10 border-t border-gray-300 flex flex-col items-center gap-6">
+              <div className="flex justify-center gap-4">
+                {project.liveUrl && (
+                  <UrlButton
+                    url={project.liveUrl}
+                    urlType="LIVE"
+                    theme="gray"
+                    LinkComponent={Link}
+                  />
+                )}
+                {project.githubUrl && (
+                  <UrlButton
+                    url={project.githubUrl}
+                    urlType="GITHUB"
+                    LinkComponent={Link}
+                  />
+                )}
+                {project.relatedUrl && (
+                  <UrlButton
+                    url={project.relatedUrl}
+                    urlType="RELATED"
+                    theme="gray"
+                    LinkComponent={Link}
+                  />
+                )}
+              </div>
+              <p className="text-gray-600 text-sm">
+                프로젝트 관련 외부 링크를 통해, 더 자세한 내용을 확인하세요 :)
+              </p>
             </div>
           )}
         </div>
