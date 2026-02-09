@@ -229,7 +229,7 @@ export class ProjectService {
     const limit = 8;
     const result = await projectRepository.findRecentProjects(limit);
 
-    return result;
+    return { projects: result };
   }
 
   async getProjectById(id: string) {

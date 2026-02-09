@@ -4,6 +4,7 @@ import "./globals.css";
 import { Suspense } from "react";
 import LayoutFooter from "@/components/layout/Footer";
 import LayoutHeader from "@/components/layout/HeaderUi";
+import QueryProvider from "@/providers/QueryProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,17 +31,19 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="flex flex-col min-h-screen">
-          <Suspense fallback={<header className="h-16" />}>
-            <LayoutHeader />
-          </Suspense>
-          <main className="flex-1 flex flex-col">
-            <div className="w-full max-w-7xl mx-auto py-10 px-6">
-              {children}
-            </div>
-          </main>
-          <LayoutFooter />
-        </div>
+        <QueryProvider>
+          <div className="flex flex-col min-h-screen">
+            <Suspense fallback={<header className="h-16" />}>
+              <LayoutHeader />
+            </Suspense>
+            <main className="flex-1 flex flex-col">
+              <div className="w-full max-w-7xl mx-auto py-10 px-6">
+                {children}
+              </div>
+            </main>
+            <LayoutFooter />
+          </div>
+        </QueryProvider>
       </body>
     </html>
   );

@@ -1,54 +1,71 @@
 "use client";
 
-import { getProjectById } from "@/lib/projects";
+import { getProjectById, updateProjectViewCount } from "@/lib/projects";
 import {
   ArticleItem,
   FileItem,
-  formatDate,
   formatFullDate,
   LoadingArea,
   ProjectStatusLabel,
   TagItemList,
   UrlButton,
-  type ProjectResponse,
-  type TechTagResponse,
+  type ProjectApiResponse,
 } from "@shared";
 import { notFound, useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Link as LinkIcon } from "@shared/icons";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function ProjectDetailPage() {
   const params = useParams();
   const projectId = params?.id as string;
-  const [isLoading, setIsLoading] = useState(true);
-  const [project, setProject] = useState<ProjectResponse | null>(null);
+  const queryClient = useQueryClient();
 
-  const fetchProject = async () => {
-    if (!projectId) return;
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["project", projectId],
+    queryFn: () => getProjectById(projectId),
+    enabled: !!projectId,
+    staleTime: 1000 * 60 * 5,
+  });
 
-    try {
-      const response = await getProjectById(projectId);
-      if (response.success && response.data) {
-        setProject(response.data);
-      } else {
-        throw new Error(
-          response.message || "프로젝트 정보를 찾을 수 없습니다."
-        );
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const project = data?.data;
+
+  const { mutate: addViewCount } = useMutation({
+    mutationFn: () => updateProjectViewCount(projectId as string),
+    onSuccess: () => {
+      queryClient.setQueryData(
+        ["project", projectId],
+        (prev: ProjectApiResponse) => {
+          if (!prev || !prev.data) return prev;
+          return {
+            ...prev,
+            data: {
+              ...prev.data,
+              viewCount: prev.data.viewCount + 1,
+            },
+          };
+        }
+      );
+
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+    },
+  });
+
+  const isMounted = useRef(false);
 
   useEffect(() => {
-    fetchProject();
-  }, [projectId]);
+    if (!isMounted.current && projectId) {
+      addViewCount();
+      isMounted.current = true;
+    }
+
+    return () => {
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+    };
+  }, [projectId, addViewCount, queryClient]);
 
   if (isLoading) return <LoadingArea />;
-  if (!project) {
+  if (isError || !project) {
     notFound();
   }
   return (

@@ -1,48 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  Button,
-  LoadingArea,
-  NodataArea,
-  ProjectCard,
-  type ProjectItemResponse,
-} from "@shared";
+import { Button, LoadingArea, NodataArea, ProjectCard } from "@shared";
 import Image from "next/image";
 import Link from "next/link";
 import { getRecentProjectList } from "@/lib/projects";
 import clsx from "clsx";
+import { useQuery } from "@tanstack/react-query";
 
 export default function HomePage() {
-  const [projectList, setProjectList] = useState<ProjectItemResponse[] | null>(
-    null
-  );
-  const [isLoading, setIsLoading] = useState(true);
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["projects", "recent"],
+    queryFn: getRecentProjectList,
+    staleTime: 1000 * 60,
+  });
 
-  useEffect(() => {
-    const fetchProject = async () => {
-      setIsLoading(true);
-      try {
-        const response = await getRecentProjectList();
-        if (response.success && response.data) {
-          setProjectList(response.data.projects);
-        } else {
-          throw new Error(
-            response.message || "프로젝트 정보를 찾을 수 없습니다."
-          );
-        }
-      } catch (err) {
-        console.error(err);
-        alert("데이터를 불러오는데 실패했습니다.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchProject();
-  }, []);
+  const projectList = data?.data?.projects || [];
+  const isProjectList = projectList && projectList?.length > 0;
 
   if (isLoading) return <LoadingArea />;
-  const isProjectList = projectList && projectList?.length > 0;
   return (
     <>
       <section className=" bg-primary-light bg-[url('/images/bg_visual.png')] bg-no-repeat bg-cover bg-center rounded-2xl">
@@ -79,7 +54,13 @@ export default function HomePage() {
                 />
               ))
             ) : (
-              <NodataArea />
+              <NodataArea
+                content={
+                  isError
+                    ? "데이터를 불러오는 중 오류가 발생했습니다."
+                    : undefined
+                }
+              />
             )}
           </div>
         </div>

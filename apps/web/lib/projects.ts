@@ -4,6 +4,7 @@ import type {
   ProjectApiResponse,
   ProjectListApiResponse,
   GetProjectListParams,
+  ProjectViewCountApiResponse,
 } from "@shared";
 
 export const getPublicProjectList = async ({
@@ -47,7 +48,7 @@ export const getPublicProjectList = async ({
 export const getRecentProjectList = async () => {
   try {
     const response = await api.get<ProjectListApiResponse>(
-      "/api/projects/public"
+      "/api/projects/recent"
     );
 
     return response.data;
@@ -60,7 +61,8 @@ export const getRecentProjectList = async () => {
         success: false,
         data: null,
         message:
-          serverMessage || "프로젝트 목록을 불러오는 중 오류가 발생했습니다.",
+          serverMessage ||
+          "프로젝트 최신 목록을 불러오는 중 오류가 발생했습니다.",
       };
     }
     return {
@@ -86,6 +88,34 @@ export const getProjectById = async (id: string) => {
         data: null,
         message:
           serverMessage || "프로젝트 정보를 불러오는 중 오류가 발생했습니다.",
+      };
+    }
+    return {
+      success: false,
+      data: null,
+      message: "시스템 오류가 발생했습니다.",
+    };
+  }
+};
+
+export const updateProjectViewCount = async (id: string) => {
+  try {
+    const response = await api.patch<ProjectViewCountApiResponse>(
+      `/api/projects/${id}/viewcount`,
+      {}
+    );
+
+    return response.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      const serverMessage = error.response?.data?.message;
+      console.error("서버 에러 발생:", serverMessage);
+
+      return {
+        success: false,
+        data: null,
+        message:
+          serverMessage || "프로젝트 조회수 업데이트 중 오류가 발생했습니다.",
       };
     }
     return {
