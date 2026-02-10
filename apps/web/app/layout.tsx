@@ -45,8 +45,6 @@ export const metadata: Metadata = {
 // 최소 해상도, 1280px 정도로 고정
 export const viewport: Viewport = {
   width: 1280,
-  initialScale: 1,
-  // 사용자가 임의로 확대/축소하는 것을 허용할지 여부 (선택)
   userScalable: true,
 };
 

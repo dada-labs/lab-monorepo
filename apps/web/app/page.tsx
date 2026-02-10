@@ -33,9 +33,9 @@ export default function HomePage() {
       <section className="w-full">
         <div className="flex flex-col py-20">
           <div className="mb-8 flex flex-col gap-2">
-            <h2 className="text-2xl font-bold">최신 아카이빙</h2>
+            <h2 className="text-2xl font-bold">최근 프로젝트</h2>
             <p className="text-gray-700 text-sm">
-              개발 및 프로젝트 관련한 최신 기록을 확인해 보세요.
+              개발 기술 및 프로젝트 관련한 최신 기록을 확인해 보세요.
             </p>
           </div>
           <div
@@ -74,7 +74,7 @@ export default function HomePage() {
             </p>
           </div>
           <div className="flex">
-            <Link href="/project">
+            <Link href="/contact">
               <Button type="button">프로젝트 문의하기</Button>
             </Link>
           </div>
