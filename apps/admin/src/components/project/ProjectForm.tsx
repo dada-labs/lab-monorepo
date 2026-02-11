@@ -93,6 +93,13 @@ export default function ProjectForm({
     }
   };
 
+  const [deletedFileIds, setDeletedFileIds] = useState<string[]>([]);
+
+  // 2. 삭제 버튼 클릭 시 실행될 핸들러
+  const handleDeleteExistingFile = (fileId: string) => {
+    setDeletedFileIds((prev) => [...prev, fileId]);
+  };
+
   // 파일 지우기
   const removeDoc = (index: number) => {
     setDocs((prev) => prev.filter((_, i) => i !== index));
@@ -143,6 +150,10 @@ export default function ProjectForm({
 
       // 태그 배열, 문자열 처리
       data.append("techs", JSON.stringify(techs));
+
+      if (mode === "EDIT" && deletedFileIds.length > 0) {
+        data.append("deletedFileIds", JSON.stringify(deletedFileIds));
+      }
 
       // 파일 추가
       if (thumbnail) data.append("thumbnail", thumbnail);
@@ -397,17 +408,16 @@ export default function ProjectForm({
           initialData.attachments.length > 0 && (
             <div className="flex flex-col gap-2 mb-4">
               <p className="text-sm text-gray-700">기존 첨부파일</p>
-              {initialData.attachments.map((item) => (
-                <FileItem
-                  key={item.file.id}
-                  fileName={item.file.fileName}
-                  fileUrl={item.file.url}
-                  onDelete={() => {
-                    /** 삭제 로직 호출 */
-                    console.log("삭제 로직 호출");
-                  }}
-                />
-              ))}
+              {initialData.attachments
+                .filter((item) => !deletedFileIds.includes(item.file.id))
+                .map((item) => (
+                  <FileItem
+                    key={item.file.id}
+                    fileName={item.file.fileName}
+                    fileUrl={item.file.url}
+                    onDelete={() => handleDeleteExistingFile(item.file.id)}
+                  />
+                ))}
             </div>
           )}
       </div>
