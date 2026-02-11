@@ -12,4 +12,36 @@
 
   /* 애니메이션 등 기타 공통 설정 */
   --animate-slow: spin 3s linear infinite;
+
+  --editor-p-min-h: 1rem;
+  --editor-line-height: 1.75rem;
+}
+
+@utility project-detail-content {
+  font-size: var(--text-sm);
+  line-height: var(--editor-line-height);
+
+  & p {
+    min-height: var(--editor-p-min-h);
+    margin-bottom: calc(var(--spacing) * 1);
+  }
+
+  & h3 {
+    margin-top: calc(var(--spacing) * 4);
+    margin-bottom: calc(var(--spacing) * 1);
+    font-size: var(--text-base);
+    font-weight: var(--font-bold);
+  }
+
+  & code {
+    padding: calc(var(--spacing) * 1) calc(var(--spacing) * 2);
+    background: var(--color-gray-200);
+    border-radius: var(--radius-sm);
+  }
+
+  & pre {
+    padding: calc(var(--spacing) * 2) calc(var(--spacing) * 3);
+    background: var(--color-gray-100);
+    border-radius: var(--radius-sm);
+  }
 }
