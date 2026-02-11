@@ -40,12 +40,17 @@ export const updateProject = async (req: Request, res: Response) => {
       docs?: Express.Multer.File[];
     };
 
+    const { deletedFileIds: deletedFileIdsRaw, ...updateData } = req.body;
+    const deletedFileIds = deletedFileIdsRaw
+      ? JSON.parse(deletedFileIdsRaw)
+      : [];
     const { id } = req.params;
     const result = await projectService.updateProject(
       currentUser,
       id as string,
-      req.body,
-      files
+      updateData,
+      files,
+      deletedFileIds
     );
     res.status(200).json({
       success: true,

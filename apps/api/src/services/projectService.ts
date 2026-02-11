@@ -110,7 +110,8 @@ export class ProjectService {
     currentUser: AuthUser,
     id: string,
     dto: UpdateProjectDto,
-    files?: { thumbnail?: Express.Multer.File[]; docs?: Express.Multer.File[] }
+    files?: { thumbnail?: Express.Multer.File[]; docs?: Express.Multer.File[] },
+    deletedFileIds?: string[]
   ) {
     this.validateAuth(currentUser);
     const existingProject = await projectRepository.findById(id);
@@ -157,11 +158,33 @@ export class ProjectService {
         }
       }
 
+      const cloudinaryKeysToDelete: string[] = [];
       // 2. DB 트랜잭션 실행
       const result = await prisma.$transaction(async (tx) => {
         // 기존 썸네일 삭제 (DB 성공 확신 시점에 Cloudinary에서 삭제)
         if (thumbnailData && existingProject.thumbnail?.key) {
           await deleteFromCloudinary(existingProject.thumbnail.key);
+        }
+
+        if (deletedFileIds && deletedFileIds.length > 0) {
+          const targets = await tx.attachment.findMany({
+            where: { id: { in: deletedFileIds } },
+            select: { key: true },
+          });
+          targets.forEach((t) => t.key && cloudinaryKeysToDelete.push(t.key));
+
+          // ProjectAttachment 데이터 먼저 삭제
+          await tx.projectAttachment.deleteMany({
+            where: {
+              projectId: id,
+              fileId: { in: deletedFileIds },
+            },
+          });
+
+          // Attachment 데이터 삭제
+          await tx.attachment.deleteMany({
+            where: { id: { in: deletedFileIds } },
+          });
         }
 
         return await projectRepository.update(
