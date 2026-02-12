@@ -4,6 +4,7 @@ export * from "./FormTextArea";
 export * from "./Selector";
 export * from "./SelectorProjectStatus";
 export * from "./ProjectCard";
+export * from "./ProjectCardSkeleton";
 export * from "./LoadingArea";
 export * from "./Pagination";
 export * from "./NodataArea";
