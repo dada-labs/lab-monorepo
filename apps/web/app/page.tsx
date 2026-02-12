@@ -1,6 +1,12 @@
 "use client";
 
-import { Button, LoadingArea, NodataArea, ProjectCard } from "@shared";
+import {
+  Button,
+  LoadingArea,
+  NodataArea,
+  ProjectCard,
+  ProjectCardSkeleton,
+} from "@shared";
 import Image from "next/image";
 import Link from "next/link";
 import { getRecentProjectList } from "@/lib/projects";
@@ -17,10 +23,9 @@ export default function HomePage() {
   const projectList = data?.data?.projects || [];
   const isProjectList = projectList && projectList?.length > 0;
 
-  if (isLoading) return <LoadingArea />;
   return (
     <>
-      <section className=" bg-primary-light bg-[url('/images/bg_visual.png')] bg-no-repeat bg-cover bg-center rounded-2xl">
+      <section className=" bg-black bg-[url('/images/bg_visual.png')] bg-no-repeat bg-cover bg-center rounded-2xl">
         <div className="h-80 flex flex-col items-center justify-center gap-6 py-20">
           <div className="flex flex-col gap-2 text-center">
             <h1 className="text-4xl font-bold text-white">Dada Lab</h1>
@@ -41,10 +46,14 @@ export default function HomePage() {
           <div
             className={clsx(
               "grid gap-6",
-              isProjectList ? "grid-cols-4" : "grid-cols-1"
+              isLoading || isProjectList ? "grid-cols-4" : "grid-cols-1"
             )}
           >
-            {isProjectList ? (
+            {isLoading ? (
+              Array.from({ length: 8 }).map((_, i) => (
+                <ProjectCardSkeleton key={`skeleton-${i}`} />
+              ))
+            ) : isProjectList ? (
               projectList.map((project) => (
                 <ProjectCard
                   key={project.id}

@@ -6,6 +6,7 @@ import {
   NodataArea,
   Pagination,
   ProjectCard,
+  ProjectCardSkeleton,
   ProjectStatus,
   SelectorProjectStatus,
 } from "@shared";
@@ -60,8 +61,6 @@ export default function ProjectListContent() {
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  if (isLoading) return <LoadingArea />;
-
   const isProjectList = projectList && projectList?.length > 0;
 
   return (
@@ -82,10 +81,14 @@ export default function ProjectListContent() {
       <div
         className={clsx(
           "grid gap-6",
-          isProjectList ? "grid-cols-4" : "grid-cols-1"
+          isLoading || isProjectList ? "grid-cols-4" : "grid-cols-1"
         )}
       >
-        {isProjectList ? (
+        {isLoading ? (
+          Array.from({ length: 8 }).map((_, i) => (
+            <ProjectCardSkeleton key={`skeleton-${i}`} />
+          ))
+        ) : isProjectList ? (
           projectList.map((project) => (
             <ProjectCard
               key={project.id}
