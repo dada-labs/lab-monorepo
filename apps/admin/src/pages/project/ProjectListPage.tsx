@@ -1,6 +1,5 @@
 import { getProjectList } from "@/lib/project";
 import {
-  LoadingArea,
   NodataArea,
   Pagination,
   ProjectCard,

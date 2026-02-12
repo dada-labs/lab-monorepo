@@ -2,7 +2,6 @@
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import {
-  LoadingArea,
   NodataArea,
   Pagination,
   ProjectCard,
