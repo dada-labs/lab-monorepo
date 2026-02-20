@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "turbo watch dev",
     "build": "turbo build",
-    "lint": "turbo lint"
+    "lint": "turbo lint",
+    "storybook:shared": "pnpm --filter @dada-lab/shared storybook"
   },
   "packageManager": "pnpm@10.28.1",
   "devDependencies": {

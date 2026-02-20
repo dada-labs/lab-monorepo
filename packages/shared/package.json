@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "main": "./index.ts",
   "types": "./index.ts",
+  "scripts": {
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
   "dependencies": {
     "clsx": "^2.1.1",
     "lucide-react": "^0.563.0",
@@ -13,10 +17,20 @@
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
-    "tailwindcss": "^4.1.18",
+    "storybook": "8.6.14",
+    "@storybook/react": "8.6.14",
+    "@storybook/react-vite": "8.6.14",
+    "@storybook/addon-essentials": "8.6.14",
+    "@storybook/addon-interactions": "8.6.14",
+    "@storybook/addon-links": "8.6.14",
+    "@storybook/blocks": "8.6.14",
+    "@storybook/test": "8.6.14",
     "@tailwindcss/vite": "^4.1.18",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
-    "typescript": "~5.9.3"
+    "@vitejs/plugin-react": "^5.1.2",
+    "tailwindcss": "^4.1.18",
+    "typescript": "~5.9.3",
+    "vite": "^7.3.1"
   }
 }
