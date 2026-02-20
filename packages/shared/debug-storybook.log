@@ -1,0 +1,38 @@
+[15:28:56.062] [INFO] storybook v10.2.10
+[15:28:56.919] [DEBUG] Getting package.json info for D:/_mini_project/dada-lab/packages/shared/package.json...
+[15:28:56.923] [WARN] You are currently using Storybook [1m10.2.10[22m but you have packages which are incompatible with it:
+
+- @storybook/addon-essentials@8.6.14 which depends on 8.6.14
+ Repo: https://github.com/storybookjs/storybook/tree/next/code/addons/essentials
+- @storybook/addon-interactions@8.6.14 which depends on 8.6.14
+ Repo: https://github.com/storybookjs/storybook/tree/next/code/addons/interactions
+- @storybook/blocks@8.6.14 which depends on ^8.6.14
+ Repo: https://github.com/storybookjs/storybook/tree/next/code/lib/blocks
+
+Please consider updating your packages or contacting the maintainers for compatibility details.
+
+For more details on compatibility guidance, see:
+https://github.com/storybookjs/storybook/issues/32836
+[15:28:58.230] [INFO] Starting...
+[15:28:58.277] [WARN] No story files found for the specified pattern: [34msrc\**\*.mdx[39m
+[15:28:58.460] [ERROR] [38;2;241;97;97mSB_CORE-SERVER_0004 (NoMatchingExportError): There was an exports mismatch error when trying to build Storybook.
+Please check whether the versions of your Storybook packages match whenever possible, as this might be the cause.
+
+Problematic example:
+{ "@storybook/react": "7.5.3", "@storybook/react-vite": "7.4.5", "storybook": "7.3.0" }
+
+Correct example:
+{ "@storybook/react": "7.5.3", "@storybook/react-vite": "7.5.3", "storybook": "7.5.3" }
+
+Please run `npx storybook doctor` for guidance on how to fix this issue.
+
+More info: 
+[39m
+    at buildOrThrow (file:///D:/_mini_project/dada-lab/node_modules/.pnpm/storybook@10.2.10_@testing-_8b743049609237d1b38d1a2a59425dd6/node_modules/storybook/dist/core-server/index.js:4509:9)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async buildDevStandalone (file:///D:/_mini_project/dada-lab/node_modules/.pnpm/storybook@10.2.10_@testing-_8b743049609237d1b38d1a2a59425dd6/node_modules/storybook/dist/core-server/index.js:7611:66)
+    at async withTelemetry (file:///D:/_mini_project/dada-lab/node_modules/.pnpm/storybook@10.2.10_@testing-_8b743049609237d1b38d1a2a59425dd6/node_modules/storybook/dist/_node-chunks/chunk-S3MWHNYJ.js:218:12)
+    at async dev (file:///D:/_mini_project/dada-lab/node_modules/.pnpm/storybook@10.2.10_@testing-_8b743049609237d1b38d1a2a59425dd6/node_modules/storybook/dist/bin/core.js:2734:3)
+    at async _Command.<anonymous> (file:///D:/_mini_project/dada-lab/node_modules/.pnpm/storybook@10.2.10_@testing-_8b743049609237d1b38d1a2a59425dd6/node_modules/storybook/dist/bin/core.js:2803:92)
+[15:28:58.470] [WARN] Broken build, fix the error above.
+You may need to refresh the browser.

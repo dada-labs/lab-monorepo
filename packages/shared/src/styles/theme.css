@@ -1,3 +1,4 @@
+@import "tailwindcss";
 @theme {
   /* 메인 컬러 */
   --color-primary: #035bff;
@@ -5,6 +6,9 @@
   --color-primary-light: #bed3fb;
   --color-primary-lightest: #e9f1ff;
   --color-primary-dark: #004cd9;
+
+  --color-secondary: #00bcd4;
+  --color-secondary-dark: #00acc1;
 
   /* 상태 컬러 */
   --color-success: #10b981;
