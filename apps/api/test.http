@@ -120,3 +120,14 @@ Content-Type: application/application/json
 ### 프로젝트 상세보기
 GET http://localhost:4000/api/projects/recent
 Content-Type: application/json
+
+###
+POST http://localhost:4000/api/contacts
+Content-Type: application/json
+
+{
+  "name": "홍길동",
+  "email": "test@example.com",
+  "title": "다다랩 프로젝트 협업 문의",
+  "content": "안녕하세요, 다다랩의 프로젝트 아카이빙 솔루션에 관심이 있어 연락드렸습니다. 구체적인 협업 프로세스가 궁금합니다."
+}
