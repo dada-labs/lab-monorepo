@@ -142,6 +142,7 @@ model Contact {
     id      String @id @default(cuid())
     name    String
     email   String
+    title   String
     content String
 
     status ContactStatus @default(UNREAD)
