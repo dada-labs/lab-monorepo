@@ -20,7 +20,7 @@ export interface ContactResponse extends ContactBase {
   attachments: { file: AttachmentResponse }[];
 }
 
-export interface ProjectApiResponse {
+export interface ContactApiResponse {
   success: boolean;
   data: ContactResponse | null;
   message?: string;

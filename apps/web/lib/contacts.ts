@@ -1,10 +1,10 @@
 // src/api/auth.ts
 import api, { isAxiosError } from "@/lib/api";
-import type { ProjectApiResponse } from "@shared";
+import type { ContactApiResponse } from "@shared";
 
 export const createContact = async (formData: FormData) => {
   try {
-    const response = await api.post<ProjectApiResponse>(
+    const response = await api.post<ContactApiResponse>(
       "/api/contacts",
       formData,
       {
