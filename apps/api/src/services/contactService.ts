@@ -2,7 +2,10 @@ import { contactRepository } from "../repositories/contactRepository.js";
 import type { CreateContactDto } from "@shared";
 
 export class ContactService {
-  async createContact(data: CreateContactDto) {
+  async createContact(
+    data: CreateContactDto,
+    files: { docs?: Express.Multer.File[] }
+  ) {
     if (!data.content) {
       throw new Error("문의 내용은 필수 항목입니다.");
     }
