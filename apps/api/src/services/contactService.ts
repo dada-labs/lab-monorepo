@@ -1,6 +1,7 @@
 import { uploadToCloudinary } from "src/utils/cloudinary.js";
 import { contactRepository } from "../repositories/contactRepository.js";
 import type { CreateContactDto } from "@shared";
+import { mailService } from "./mailService.js";
 
 export class ContactService {
   async createContact(
@@ -26,6 +27,22 @@ export class ContactService {
       }
     }
 
-    return await contactRepository.create(data, attachments);
+    const result = await contactRepository.create(data, attachments);
+
+    Promise.allSettled([
+      mailService.sendAdminNotification(result),
+      mailService.sendCustomerConfirmation(result),
+    ]).then((results) => {
+      results.forEach((res, index) => {
+        if (res.status === "rejected") {
+          console.error(
+            `Mail ${index === 0 ? "Admin" : "Visitor"} failed:`,
+            res.reason
+          );
+        }
+      });
+    });
+
+    return result;
   }
 }
