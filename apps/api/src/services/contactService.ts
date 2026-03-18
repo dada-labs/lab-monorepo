@@ -45,4 +45,17 @@ export class ContactService {
 
     return result;
   }
+
+  async getContactList() {
+    const result = await contactRepository.findContactList();
+
+    return { projects: result };
+  }
+
+  async getContactById(id: string) {
+    const result = await contactRepository.findById(id);
+    if (!result) throw new Error("관련 문의 정보를 찾을 수 없습니다.");
+
+    return result;
+  }
 }

@@ -27,4 +27,23 @@ export const contactRepository = {
       },
     });
   },
+
+  // 목록 조회 : 필터링 및 페이지네이션 제외
+  async findContactList() {
+    return prisma.contact.findMany({
+      orderBy: { createdAt: "desc" },
+      include: {
+        attachments: { include: { file: true } },
+      },
+    });
+  },
+
+  async findById(id: string) {
+    return prisma.contact.findUnique({
+      where: { id },
+      include: {
+        attachments: { include: { file: true } },
+      },
+    });
+  },
 };
