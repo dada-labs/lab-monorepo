@@ -1,4 +1,4 @@
-import { AttachmentResponse } from "./project";
+import type { AttachmentResponse } from "./project";
 
 export type ContactStatus = "UNREAD" | "IN_REVIEW" | "ANSWERED" | "CANCELED";
 export const ContactStatusConfig: Record<
