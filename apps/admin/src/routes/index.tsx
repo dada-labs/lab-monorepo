@@ -6,6 +6,7 @@ import ProjectWritePage from "@/pages/project/ProjectWritePage";
 import ProjectEditPage from "@/pages/project/ProjectEditPage";
 import ContactListPage from "@/pages/contact/ContactListPage";
 import UserListPage from "@/pages/user/UserListPage";
+import ContactdkDetailPage from "@/pages/contact/ContactDetailPage";
 
 export const publicRoutes = [
   { path: "/auth/signin", element: <SignInPage /> },
@@ -18,5 +19,6 @@ export const protectedRoutes = [
   { path: "/project/write", element: <ProjectWritePage /> },
   { path: "/project/edit/:id", element: <ProjectEditPage /> },
   { path: "/contact", element: <ContactListPage /> },
+  { path: "/contact/:id", element: <ContactdkDetailPage /> },
   { path: "/users", element: <UserListPage /> },
 ];
