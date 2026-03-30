@@ -49,7 +49,7 @@ export class ContactService {
   async getContactList() {
     const result = await contactRepository.findContactList();
 
-    return { projects: result };
+    return result;
   }
 
   async getContactById(id: string) {

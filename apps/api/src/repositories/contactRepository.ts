@@ -30,12 +30,16 @@ export const contactRepository = {
 
   // 목록 조회 : 필터링 및 페이지네이션 제외
   async findContactList() {
-    return prisma.contact.findMany({
-      orderBy: { createdAt: "desc" },
-      include: {
-        attachments: { include: { file: true } },
-      },
-    });
+    const [total, items] = await Promise.all([
+      prisma.contact.count(),
+      prisma.contact.findMany({
+        orderBy: { createdAt: "desc" },
+        include: {
+          attachments: { include: { file: true } },
+        },
+      }),
+    ]);
+    return { total, items };
   },
 
   async findById(id: string) {
